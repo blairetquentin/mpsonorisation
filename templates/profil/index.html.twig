@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfilController!{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Mon Profil</h1>
+    
+    {% for message in app.flashes('succés')%}
+        <div>{{ message }}</div>
+    {% endfor %}
+
+    {{ form_start(form)}}
+        {{ form_row(form.nom)}}
+        {{ form_row(form.prenom)}}
+        {{ form_row(form.date_naissance)}}
+        {{ form_row(form.telephone)}}
+        {{ form_row(form.adresse)}}
+        {{ form_row(form.ville)}}
+        <button type="submit">Enrengistrer</button>
+    {{ form_end(form)}}
+</div>
+{% endblock %}
