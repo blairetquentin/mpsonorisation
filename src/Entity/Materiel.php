@@ -30,7 +30,7 @@ class Materiel
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Souscategorie $sous_categorie = null;
+    private ?SousCategorie $sous_categorie = null;
 
     public function getId(): ?int
     {
@@ -97,12 +97,12 @@ class Materiel
         return $this;
     }
 
-    public function getSousCategorie(): ?Souscategorie
+    public function getSousCategorie(): ?SousCategorie
     {
         return $this->sous_categorie;
     }
 
-    public function setSousCategorie(?Souscategorie $sous_categorie): static
+    public function setSousCategorie(?SousCategorie $sous_categorie): static
     {
         $this->sous_categorie = $sous_categorie;
 

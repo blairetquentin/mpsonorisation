@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier — MpSonorisation{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Mon panier</h1>
+
+    {% if not app.user %}
+        <p>Vous devez être <a href="{{ path('app_login') }}">connecté</a> pour voir votre panier.</p>
+    {% elseif not panier or panier.panierMateriel is empty %}
+        <p class="text-muted">Votre panier est vide.</p>
+        <a href="{{ path('app_catalogue') }}" class="btn btn-primary">Voir le catalogue</a>
+    {% else %}
+        <table class="table table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Matériel</th>
+                    <th>Référence</th>
+                    <th>Quantité</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pm in panier.panierMateriel %}
+                <tr>
+                    <td>{{ pm.materiel.libelle }}</td>
+                    <td>{{ pm.materiel.reference }}</td>
+                    <td>{{ pm.quantite }}</td>
+                    <td>
+                        <a href="{{ path('app_panier_increase', { id: pm.id }) }}"
+                           class="btn btn-sm btn-outline-secondary">+</a>
+                        <a href="{{ path('app_panier_decrease', { id: pm.id }) }}"
+                           class="btn btn-sm btn-outline-secondary">-</a>
+                        <a href="{{ path('app_panier_remove', { id: pm.id }) }}"
+                           class="btn btn-sm btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_catalogue') }}" class="btn btn-outline-primary me-2">
+            Continuer les achats
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue — MpSonorisation{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Notre catalogue</h1>
+
+    {% for categorie, sousCategories in catalogue %}
+        <h2 class="mt-5 mb-3 border-bottom pb-2">{{ categorie }}</h2>
+
+        {% for sousCategorie, materiels in sousCategories %}
+            <h3 class="mt-4 mb-3 fs-5 text-muted">{{ sousCategorie }}</h3>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+                {% for materiel in materiels %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            {% if materiel.urlMateriel %}
+                                <img src="{{ asset(materiel.urlMateriel) }}"
+                                     class="card-img-top"
+                                     alt="{{ materiel.libelle }}"
+                                     style="object-fit: cover; height: 200px;">
+                            {% else %}
+                                <div class="bg-secondary d-flex align-items-center justify-content-center"
+                                     style="height: 200px;">
+                                    <span class="text-white">Pas d'image</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ materiel.libelle }}</h5>
+                                <p class="card-text text-muted small">Réf. {{ materiel.reference }}</p>
+                                {% if materiel.stockDispo > 0 %}
+                                    <span class="badge bg-success">Disponible ({{ materiel.stockDispo }})</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Indisponible</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-footer bg-transparent">
+                                <a href="{{ path('app_catalogue_detail', { id: materiel.id }) }}"
+                                   class="btn btn-outline-primary btn-sm w-100">
+                                    Voir la fiche
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% if catalogue is empty %}
+        <p class="text-muted">Aucun matériel disponible pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
