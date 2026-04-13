@@ -5,6 +5,13 @@
 {% block body %}
 <div class="container py-5">
     <h1 class="mb-4">Mon panier</h1>
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
 
     {% if not app.user %}
         <p>Vous devez être <a href="{{ path('app_login') }}">connecté</a> pour voir votre panier.</p>
@@ -39,7 +46,9 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        <a href="{{ path('app_envoyer_devis') }}" class="btn btn-success me-2">
+            Envoyer le devis par email
+        </a>
         <a href="{{ path('app_catalogue') }}" class="btn btn-outline-primary me-2">
             Continuer les achats
         </a>
