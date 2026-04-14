@@ -46,6 +46,15 @@
                 {% endfor %}
             </tbody>
         </table>
+        <hr class="my-4">
+        <h4>Informations de location</h4>
+        {{ form_start(form) }}
+            {{ form_errors(form) }}
+{{ form_row(form.date_location) }}
+{{ form_row(form.date_fin_location) }}
+{{ form_row(form.adresse_location) }}
+            <button type="submit" class="btn btn-primary mt-2">Enregistrer</button>
+        {{ form_end(form, {'render_rest': false}) }}
         <a href="{{ path('app_envoyer_devis') }}" class="btn btn-success me-2">
             Envoyer le devis par email
         </a>

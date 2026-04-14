@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
 </head>
 <body>
-    <h1>Nouvelle demande de devis</h1>
+    <h1>Demande de devis reçue — MpSonorisation</h1>
 
-    <p>Vous avez reçu une nouvelle demande de devis de la part de <strong>{{ user.prenom }} {{ user.nom }}</strong>.</p>
-    <p>Email du client : <strong>{{ user.email }}</strong></p>
-    <p>Événement prévu du : <strong>{{ panier.dateLocation ? panier.dateLocation|date('d/m/Y') : 'Non renseigné' }}</strong> au <strong>{{ panier.dateFinLocation ? panier.dateFinLocation|date('d/m/Y') : 'Non renseigné' }}</strong></p>
-    <p>Adresse : <strong>{{ panier.adresseLocation ?? 'Non renseignée' }}</strong></p>
+    <p>Bonjour {{ user.prenom }} {{ user.nom }},</p>
+    <p>Nous avons bien reçu votre demande de devis. Voici le récapitulatif :</p>
 
-    <h2>Récapitulatif du matériel demandé :</h2>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
             <tr>
@@ -30,5 +27,8 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <p>Nous reviendrons vers vous rapidement.</p>
+    <p>L'équipe MpSonorisation</p>
 </body>
 </html>

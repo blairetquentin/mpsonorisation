@@ -19,6 +19,9 @@ class Panier
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable:true)]
     private ?\DateTime $date_location = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTime $date_fin_location = null;
+
     #[ORM\Column(length: 255, nullable:true)]
     private ?string $adresse_location = null;
 
@@ -48,6 +51,17 @@ class Panier
     {
         $this->date_location = $date_location;
 
+        return $this;
+    }
+
+    public function getDateFinLocation(): ?\DateTime
+    {
+        return $this->date_fin_location;
+    }
+
+    public function setDateFinLocation(?\DateTime $date_fin_location): static
+    {
+        $this->date_fin_location = $date_fin_location;
         return $this;
     }
 
