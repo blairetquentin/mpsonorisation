@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-4">
+    <a href="{{ path('admin') }}" class="btn btn-secondary mb-3">← Retour</a>
+
+    <h2>Devis #{{ devis.id }}</h2>
+
+  
+    <div class="card mb-4">
+        <div class="card-header"><strong>Informations client</strong></div>
+        <div class="card-body">
+            <p><strong>Nom :</strong> {{ user.prenom }} {{ user.nom }}</p>
+            <p><strong>Email :</strong> {{ user.email }}</p>
+            <p><strong>Téléphone :</strong> {{ user.telephone ?? 'Non renseigné' }}</p>
+            <p><strong>Adresse :</strong> {{ user.adresse ?? 'Non renseignée' }}</p>
+        </div>
+    </div>
+
+ 
+    <div class="card mb-4">
+        <div class="card-header"><strong>Informations de location</strong></div>
+        <div class="card-body">
+            <p><strong>Date de location :</strong> {{ panier.dateLocation ? panier.dateLocation|date('d/m/Y') : 'Non renseignée' }}</p>
+            <p><strong>Date de fin :</strong> {{ panier.dateFinLocation ? panier.dateFinLocation|date('d/m/Y') : 'Non renseignée' }}</p>
+            <p><strong>Adresse de location :</strong> {{ panier.adresseLocation ?? 'Non renseignée' }}</p>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header"><strong>Matériel demandé</strong></div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Matériel</th>
+                        <th>Référence</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for panierMateriel in panier.getPanierMateriel() %}
+                <tr>
+                    <td>{{ panierMateriel.materiel.libelle }}</td>
+                    <td>{{ panierMateriel.materiel.reference }}</td>
+                    <td>{{ panierMateriel.quantite }}</td>
+                    <td>
+                        <form method="post" action="{{ path('admin_devis_supprimer_materiel', {devisId: devis.id, panierId: panierMateriel.id}) }}"
+                            onsubmit="return confirm('Supprimer ce matériel ?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('supprimer_materiel_' ~ panierMateriel.id) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header"><strong>Statut du devis</strong></div>
+        <div class="card-body">
+            <p><strong>Statut :</strong> {{ devis.statut }}</p>
+            <p><strong>Commentaire admin :</strong> {{ devis.commentaireAdmin ?? 'Aucun' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

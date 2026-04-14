@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Devis;
 use App\Entity\User;
 use App\Entity\Panier;
 use App\Entity\PanierMateriel;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Mime\Email;
+
 
 class PanierController extends AbstractController
 {
@@ -122,7 +124,7 @@ class PanierController extends AbstractController
     }   
 
    #[Route('/panier/envoyer-devis', name:'app_envoyer_devis')]
-    public function envoyerDevis(PanierRepository $panierRepo, MailerInterface $mailer): Response
+    public function envoyerDevis(PanierRepository $panierRepo, MailerInterface $mailer, EntityManagerInterface $em): Response
     {
     /** @var User $user */
     $user = $this->getUser();
@@ -151,6 +153,12 @@ class PanierController extends AbstractController
             'user' => $user,
             'panier' => $panier,
         ]));
+    $devis = new Devis();
+    $devis->setDateDemande(new \DateTime());
+    $devis->setStatut('en_attente');
+    $devis->setPanier($panier);
+    $em->persist($devis);
+    $em->flush();
     $mailer->send($emailAdmin);
     $mailer->send($emailClient);
 

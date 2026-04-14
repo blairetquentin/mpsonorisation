@@ -32,6 +32,8 @@ class Panier
     #[ORM\OneToMany(targetEntity:PanierMateriel::class, mappedBy:'panier')]
     private Collection $panierMateriels;
 
+
+
     public function __construct()
     {
         $this->panierMateriels = new ArrayCollection();
@@ -90,6 +92,10 @@ class Panier
     }
     public function getPanierMateriel(): Collection{
         return $this->panierMateriels;
+    }
+    public function __toString(): string
+    {
+        return 'Panier #' . $this->id;
     }
 
 }
