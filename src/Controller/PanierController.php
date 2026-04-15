@@ -53,33 +53,38 @@ class PanierController extends AbstractController
         }
         
         $panier = $panierRepo->findOneBy(['user' => $this->getUser()]);
-        if (!$panier) {
-            $panier = new Panier();
-            $panier->setUser($this->getUser());
-            $em->persist($panier);
-        }
 
-        $panierMateriel = null;
-        foreach($panier->getPanierMateriel() as $pm) {
-            if ($pm->getMateriel() === $materiel) {
-                $panierMateriel = $pm;
-                break;
+        if ($panier && $em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
+        $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
+        return $this->redirectToRoute('app_panier');
+        }
+            if (!$panier) {
+                $panier = new Panier();
+                $panier->setUser($this->getUser());
+                $em->persist($panier);
             }
-        }
-        if ($panierMateriel) {
-            $panierMateriel->setQuantite($panierMateriel->getQuantite() + 1);
-        }else{
-            $panierMateriel = new PanierMateriel();
-            $panierMateriel->setPanier($panier);
-            $panierMateriel->setMateriel($materiel);
-            $panierMateriel->setQuantite(1);
-            $em->persist($panierMateriel);
-        }
 
-        $em->flush();
+            $panierMateriel = null;
+            foreach($panier->getPanierMateriel() as $pm) {
+                if ($pm->getMateriel() === $materiel) {
+                    $panierMateriel = $pm;
+                    break;
+                }
+            }
+            if ($panierMateriel) {
+                $panierMateriel->setQuantite($panierMateriel->getQuantite() + 1);
+            }else{
+                $panierMateriel = new PanierMateriel();
+                $panierMateriel->setPanier($panier);
+                $panierMateriel->setMateriel($materiel);
+                $panierMateriel->setQuantite(1);
+                $em->persist($panierMateriel);
+            }
 
-        return $this->redirectToRoute('app_catalogue_detail', ['id' => $materiel->getId()]);
-    }
+            $em->flush();
+
+            return $this->redirectToRoute('app_catalogue_detail', ['id' => $materiel->getId()]);
+        }
 
     #[Route('/panier/increase/{id}', name: 'app_panier_increase', requirements: ['id'=>'\d+'])]
     public function increase(int $id, EntityManagerInterface $em): Response
@@ -88,6 +93,12 @@ class PanierController extends AbstractController
         $panierMateriel = $em->getRepository(PanierMateriel::class)->find($id);
 
         if ($panierMateriel) {
+            $panier = $panierMateriel->getPanier();
+
+            if ($em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
+                $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
+                return $this->redirectToRoute('app_panier'); 
+            }
             $panierMateriel->setQuantite($panierMateriel->getQuantite() + 1);
             $em->flush();
         }
@@ -101,14 +112,20 @@ class PanierController extends AbstractController
         $panierMateriel = $em->getRepository(PanierMateriel::class)->find($id);
 
         if ($panierMateriel) {
-            if ($panierMateriel->getQuantite() > 1){
-            $panierMateriel->setQuantite($panierMateriel->getQuantite() - 1);
-            }else{
-                $em->remove($panierMateriel);
+            $panier = $panierMateriel->getPanier();
+
+            if ($em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
+                $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
+                return $this->redirectToRoute('app_panier');
+                }
+                if ($panierMateriel->getQuantite() > 1){
+                $panierMateriel->setQuantite($panierMateriel->getQuantite() - 1);
+                }else{
+                    $em->remove($panierMateriel);
+                }
+                $em->flush();
             }
-            $em->flush();
-        }
-        return $this->redirectToRoute('app_panier');
+            return $this->redirectToRoute('app_panier');
     }
 
     #[Route('/panier/remove/{id}', name: 'app_panier_remove', requirements: ['id'=>'\d+'])]
@@ -117,6 +134,12 @@ class PanierController extends AbstractController
         $panierMateriel = $em->getRepository(PanierMateriel::class)->find($id);
 
         if ($panierMateriel){
+            $panier = $panierMateriel->getPanier();
+
+            if($em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
+                $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
+                return $this->redirectToRoute('app_panier');   
+            }
             $em->remove($panierMateriel);
             $em->flush();
         }
@@ -154,11 +177,12 @@ class PanierController extends AbstractController
             'panier' => $panier,
         ]));
     $devis = new Devis();
-    $devis->setDateDemande(new \DateTime());
-    $devis->setStatut('en_attente');
-    $devis->setPanier($panier);
-    $em->persist($devis);
-    $em->flush();
+        $devis->setDateDemande(new \DateTime());
+        $devis->setStatut('en_attente');
+        $devis->setPanier($panier);
+        $em->persist($devis);
+        $em->flush();
+        
     $mailer->send($emailAdmin);
     $mailer->send($emailClient);
 

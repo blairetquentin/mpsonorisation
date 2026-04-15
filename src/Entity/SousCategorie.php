@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SousCategorieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SousCategorieRepository::class)]
@@ -16,9 +18,21 @@ class SousCategorie
     #[ORM\Column(length: 50)]
     private ?string $libelle = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'sousCategories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
+    #[ORM\OneToMany(targetEntity: Materiel::class, mappedBy: 'sous_categorie')]
+    private Collection $materiels;
+
+    public function __construct()
+    {
+        $this->materiels = new ArrayCollection();
+    }
+
+    public function getMateriels(): Collection
+    {
+        return $this->materiels;
+    }
 
     public function getId(): ?int
     {

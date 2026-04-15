@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>Réponse à votre demande de devis — MpSonorisation</h2>
+
+    <p>Bonjour {{ user.prenom }} {{ user.nom }},</p>
+
+    {% if devis.statut == 'valide' %}
+        <p>Nous avons le plaisir de vous informer que votre demande de devis a été <strong>validée</strong>.</p>
+    {% else %}
+        <p>Nous sommes dans l'obligation de vous informer que votre demande de devis a été <strong>refusée</strong>.</p>
+    {% endif %}
+
+    {% if devis.commentaireAdmin %}
+        <p><strong>Commentaire de notre équipe :</strong></p>
+        <p>{{ devis.commentaireAdmin }}</p>
+    {% endif %}
+    {% if devis.statut == 'valide' %}
+        <h3>Récapitulatif de votre commande</h3>
+
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Matériel</th>
+                    <th>Référence</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set total_general = 0 %}
+                {% for panierMateriel in devis.panier.getPanierMateriel() %}
+                    {% set total_ligne = (panierMateriel.materiel.prix ?? 0) * panierMateriel.quantite %}
+                    {% set total_general = total_general + total_ligne %}
+                    <tr>
+                        <td>{{ panierMateriel.materiel.libelle }}</td>
+                        <td>{{ panierMateriel.materiel.reference }}</td>
+                        <td>{{ panierMateriel.materiel.prix ?? '—' }} €</td>
+                        <td>{{ panierMateriel.quantite }}</td>
+                        <td>{{ total_ligne }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4"><strong>Total</strong></td>
+                    <td><strong>{{ total_general }} €</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <p><strong>Date de location :</strong> {{ devis.panier.dateLocation|date('d/m/Y') }}</p>
+        <p><strong>Date de fin :</strong> {{ devis.panier.dateFinLocation|date('d/m/Y') }}</p>
+        <p><strong>Adresse :</strong> {{ devis.panier.adresseLocation }}</p>
+    {% endif %}
+    <p>Cordialement,<br>L'équipe MpSonorisation</p>
+</body>
+</html>

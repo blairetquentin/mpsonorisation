@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\CategorieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
@@ -16,6 +19,18 @@ class Categorie
     #[ORM\Column(length: 50)]
     private ?string $libelle = null;
 
+    #[ORM\OneToMany(targetEntity: SousCategorie::class, mappedBy: 'categorie')]
+    private Collection $sousCategories;
+
+    public function __construct()
+    {
+        $this->sousCategories = new ArrayCollection();
+    }
+
+    public function getSousCategories(): Collection
+    {
+        return $this->sousCategories;
+    }
     public function getId(): ?int
     {
         return $this->id;

@@ -28,9 +28,12 @@ class Materiel
     #[ORM\Column]
     private ?int $stock_total = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy:'materiels')]
     #[ORM\JoinColumn(nullable: false)]
     private ?SousCategorie $sous_categorie = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $prix = null;
 
     public function getId(): ?int
     {
@@ -105,6 +108,18 @@ class Materiel
     public function setSousCategorie(?SousCategorie $sous_categorie): static
     {
         $this->sous_categorie = $sous_categorie;
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(?float $prix): static
+    {
+        $this->prix = $prix;
 
         return $this;
     }

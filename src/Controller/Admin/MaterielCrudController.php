@@ -7,7 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class MaterielCrudController extends AbstractCrudController
@@ -27,6 +27,8 @@ class MaterielCrudController extends AbstractCrudController
         IntegerField::new('stock_total', 'Stock total'),
         TextField::new('url_materiel', 'URL image')->hideOnIndex(),
         AssociationField::new('sous_categorie', 'Sous-catégorie'),
+        NumberField::new('prix','Prix (€)')
+        
     ];
 }
 }

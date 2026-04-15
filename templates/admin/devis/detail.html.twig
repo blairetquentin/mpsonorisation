@@ -3,10 +3,8 @@
 {% block body %}
 <div class="container mt-4">
     <a href="{{ path('admin') }}" class="btn btn-secondary mb-3">← Retour</a>
-
     <h2>Devis #{{ devis.id }}</h2>
 
-  
     <div class="card mb-4">
         <div class="card-header"><strong>Informations client</strong></div>
         <div class="card-body">
@@ -17,7 +15,6 @@
         </div>
     </div>
 
- 
     <div class="card mb-4">
         <div class="card-header"><strong>Informations de location</strong></div>
         <div class="card-body">
@@ -27,7 +24,6 @@
         </div>
     </div>
 
-
     <div class="card mb-4">
         <div class="card-header"><strong>Matériel demandé</strong></div>
         <div class="card-body">
@@ -36,36 +32,117 @@
                     <tr>
                         <th>Matériel</th>
                         <th>Référence</th>
+                        <th>Prix unitaire</th>
                         <th>Quantité</th>
+                        <th>Total ligne</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% set total_general = 0 %}
                     {% for panierMateriel in panier.getPanierMateriel() %}
-                <tr>
-                    <td>{{ panierMateriel.materiel.libelle }}</td>
-                    <td>{{ panierMateriel.materiel.reference }}</td>
-                    <td>{{ panierMateriel.quantite }}</td>
-                    <td>
-                        <form method="post" action="{{ path('admin_devis_supprimer_materiel', {devisId: devis.id, panierId: panierMateriel.id}) }}"
-                            onsubmit="return confirm('Supprimer ce matériel ?')">
-                            <input type="hidden" name="_token" value="{{ csrf_token('supprimer_materiel_' ~ panierMateriel.id) }}">
-                            <button class="btn btn-sm btn-danger">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+                    {% set total_ligne = (panierMateriel.materiel.prix ?? 0) * panierMateriel.quantite %}
+                    {% set total_general = total_general + total_ligne %}
+                    <tr>
+                        <td>{{ panierMateriel.materiel.libelle }}</td>
+                        <td>{{ panierMateriel.materiel.reference }}</td>
+                        <td>
+                            <form method="post" action="{{ path('admin_devis_modifier_prix', {devisId: devis.id, materielId: panierMateriel.materiel.id}) }}" class="d-flex gap-2">
+                                <input type="hidden" name="_token" value="{{ csrf_token('modifier_prix_' ~ panierMateriel.materiel.id) }}">
+                                <input type="number" name="prix" value="{{ panierMateriel.materiel.prix ?? 0 }}" min="0" step="0.01" class="form-control form-control-sm" style="width: 90px">
+                                <button class="btn btn-sm btn-primary">OK</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" action="{{ path('admin_devis_modifier_quantite', {devisId: devis.id, panierId: panierMateriel.id}) }}" class="d-flex gap-2">
+                                <input type="hidden" name="_token" value="{{ csrf_token('modifier_quantite_' ~ panierMateriel.id) }}">
+                                <input type="number" name="quantite" value="{{ panierMateriel.quantite }}" min="1" class="form-control form-control-sm" style="width: 80px">
+                                <button class="btn btn-sm btn-primary">OK</button>
+                            </form>
+                        </td>
+                        <td>{{ panierMateriel.materiel.prix ? total_ligne ~ ' €' : '—' }}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning mb-1"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalRemplacer{{ panierMateriel.id }}">
+                                Remplacer
+                            </button>
+                            <form method="post" action="{{ path('admin_devis_supprimer_materiel', {devisId: devis.id, panierId: panierMateriel.id}) }}"
+                                onsubmit="return confirm('Supprimer ce matériel ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('supprimer_materiel_' ~ panierMateriel.id) }}">
+                                <button class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end"><strong>Total :</strong></td>
+                        <td><strong>{{ total_general }} €</strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
 
+    {% for panierMateriel in panier.getPanierMateriel() %}
+    <div class="modal fade" id="modalRemplacer{{ panierMateriel.id }}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Remplacer : {{ panierMateriel.materiel.libelle }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {% for categorie in categories %}
+                        <h6 class="fw-bold mt-3">{{ categorie.libelle }}</h6>
+                        {% for sousCategorie in categorie.sousCategories %}
+                            <p class="text-muted mb-1"><em>{{ sousCategorie.libelle }}</em></p>
+                            {% for materiel in sousCategorie.materiels %}
+                                <form method="post" action="{{ path('admin_devis_remplacer_materiel', {devisId: devis.id, panierId: panierMateriel.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('remplacer_materiel_' ~ panierMateriel.id) }}">
+                                    <input type="hidden" name="materiel_id" value="{{ materiel.id }}">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span>{{ materiel.libelle }} — <small class="text-muted">{{ materiel.reference }}</small></span>
+                                        <button class="btn btn-sm btn-outline-warning ms-2">Choisir</button>
+                                    </div>
+                                </form>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
     <div class="card mb-4">
         <div class="card-header"><strong>Statut du devis</strong></div>
         <div class="card-body">
-            <p><strong>Statut :</strong> {{ devis.statut }}</p>
-            <p><strong>Commentaire admin :</strong> {{ devis.commentaireAdmin ?? 'Aucun' }}</p>
+            <p><strong>Statut actuel :</strong>
+                {% if devis.statut == 'en_attente' %}
+                    <span class="badge bg-warning">En attente</span>
+                {% elseif devis.statut == 'valide' %}
+                    <span class="badge bg-success">Validé</span>
+                {% else %}
+                    <span class="badge bg-danger">Refusé</span>
+                {% endif %}
+            </p>
+            <form method="post" action="{{ path('admin_devis_traiter', {id: devis.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('traiter_devis_' ~ devis.id) }}">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Commentaire pour le client</strong></label>
+                    <textarea name="commentaire" class="form-control" rows="4">{{ devis.commentaireAdmin ?? '' }}</textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button name="statut" value="valide" class="btn btn-success">Valider</button>
+                    <button name="statut" value="refuse" class="btn btn-danger">Refuser</button>
+                </div>
+            </form>
         </div>
     </div>
+
 </div>
 {% endblock %}
