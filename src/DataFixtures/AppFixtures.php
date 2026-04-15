@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Categorie;
 use App\Entity\SousCategorie;
 use App\Entity\Materiel;
+use App\Entity\Instruments;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -12,7 +13,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // ---- CATÉGORIES & SOUS-CATÉGORIES ----
+
 
         $data = [
             'Sonorisation' => [
@@ -55,11 +56,10 @@ class AppFixtures extends Fixture
                     ['libelle' => 'Praticable 1m x 1m (hauteur 40cm)', 'reference' => 'STR-SCN-001', 'stock_total' => 20, 'stock_dispo' => 16, 'prix' => 20.00],
                     ['libelle' => 'Praticable 2m x 1m (hauteur 40cm)', 'reference' => 'STR-SCN-002', 'stock_total' => 10, 'stock_dispo' => 10, 'prix' => 35.00],
                 ],
-            ], 
+            ],
         ];
 
         foreach ($data as $catLibelle => $sousCategories) {
-            
             $categorie = new Categorie();
             $categorie->setLibelle($catLibelle);
             $manager->persist($categorie);
@@ -83,6 +83,30 @@ class AppFixtures extends Fixture
                 }
             }
         }
+
+       
+
+        $instrumentsData = [
+            'Guitare électrique',
+            'Guitare basse',
+            'Guitare acoustique',
+            'Batterie',
+            'Clavier / Piano',
+            'Violon',
+            'Saxophone',
+            'Trompette',
+            'Flûte',
+            'Chant',
+            'Micro chant',
+        ];
+
+        foreach ($instrumentsData as $libelle) {
+            $instrument = new Instruments();
+            $instrument->setLibelle($libelle);
+            $instrument->setUrlInstrument('/images/instruments/default.svg');
+            $manager->persist($instrument);
+        }
+
         $manager->flush();
     }
 }

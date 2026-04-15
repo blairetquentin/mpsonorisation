@@ -157,6 +157,12 @@ class PanierController extends AbstractController
         $this->addFlash('warning', 'Votre panier est vide.');
         return $this->redirectToRoute('app_panier');
     }
+     $devis = new Devis();
+        $devis->setDateDemande(new \DateTime());
+        $devis->setStatut('en_attente');
+        $devis->setPanier($panier);
+        $em->persist($devis);
+        $em->flush();
 
     $emailAdmin = (new Email())
         ->from('blairet.quentin@gmail.com')
@@ -166,6 +172,7 @@ class PanierController extends AbstractController
         ->html($this->renderView('devis/index.html.twig', [
             'user' => $user,
             'panier' => $panier,
+            'devis' => $devis,
         ]));
 
     $emailClient = (new Email())
@@ -176,12 +183,7 @@ class PanierController extends AbstractController
             'user' => $user,
             'panier' => $panier,
         ]));
-    $devis = new Devis();
-        $devis->setDateDemande(new \DateTime());
-        $devis->setStatut('en_attente');
-        $devis->setPanier($panier);
-        $em->persist($devis);
-        $em->flush();
+   
         
     $mailer->send($emailAdmin);
     $mailer->send($emailClient);

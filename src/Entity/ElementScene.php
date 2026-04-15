@@ -30,6 +30,9 @@ class ElementScene
     #[ORM\JoinColumn(nullable: false)]
     private ?Instruments $instrument = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $nom_musicien = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,19 @@ class ElementScene
     {
         $this->instrument = $instrument;
 
-        return $this;
+       return $this;
     }
+    
+    public function getNomMusicien(): ?string
+    {
+        return $this->nom_musicien;
+    }
+
+    public function setNomMusicien(string $nom_musicien): static
+    {
+        $this->nom_musicien = $nom_musicien;
+
+        return $this;
 }
+}
+

@@ -114,11 +114,6 @@ class DevisDetailController extends AbstractController
         $devis->setStatut($statut);
         $devis->setCommentaireAdmin($commentaire);
         $em->flush();
-        if ($statut === 'refuse') {
-            $em->remove($devis);
-            $em->flush();
-            }
-
 
         $user = $devis->getPanier()->getUser();
         $email = (new \Symfony\Component\Mime\Email())
@@ -129,11 +124,15 @@ class DevisDetailController extends AbstractController
                 'devis' => $devis,
                 'user' => $user,
             ]));
-
         $mailer->send($email);
 
+        if ($statut === 'refuse') {
+            $em->remove($devis);
+            $em->flush();
+        }
+
         $this->addFlash('success', 'Devis ' . ($statut === 'valide' ? 'validé' : 'refusé') . ' et email envoyé.');
-        return $this->redirectToRoute('admin_devis_detail_custom', ['id' => $id]);
+        return $this->redirectToRoute('admin_devis_index');
     }
 
     #[Route('/admin/devis/{devisId}/materiel/{materielId}/prix', name: 'admin_devis_modifier_prix', methods: ['POST'])]

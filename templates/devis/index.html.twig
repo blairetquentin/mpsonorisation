@@ -28,6 +28,11 @@
                 <td>{{ pm.quantite }}</td>
             </tr>
             {% endfor %}
+        <p>
+            <a href="{{ absolute_url(path('admin_devis_detail_custom', {id: devis.id})) }}">
+                 Cliquez ici pour traiter ce devis
+            </a>
+        </p>    
         </tbody>
     </table>
 </body>

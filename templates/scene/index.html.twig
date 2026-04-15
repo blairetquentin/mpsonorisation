@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Module Scène{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Module Scène</h1>
+
+    {# Si l'utilisateur n'est PAS connecté #}
+    {% if not connecte %}
+        <div class="alert alert-warning">
+            <strong>Accès limité.</strong>
+            Pour créer un plan de scène, vous devez avoir un compte.<br>
+            <a href="{{ path('app_register') }}" class="btn btn-primary mt-2">
+                Créez un compte
+            </a>
+            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary mt-2">
+                Se connecter
+            </a>
+        </div>
+
+    {# Si l'utilisateur EST connecté #}
+    {% else %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h5 mb-0">Mes plans de scène</h2>
+            {# Ce lien sera actif à partir de SF13 #}
+            <a href="{{ path('app_scene_create') }}" class="btn btn-primary">
+                + Nouveau plan
+            </a>
+        </div>
+
+        {# Pas encore de plans #}
+        {% if scenes is empty %}
+            <p class="text-muted">Vous n'avez pas encore de plan de scène.</p>
+
+        {# On affiche les plans existants #}
+        {% else %}
+            <div class="row g-3">
+                {% for scene in scenes %}
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+
+                            {# scene.nomEvenement appelle getNomEvenement() #}
+                            <h5 class="card-title">{{ scene.nomEvenement }}</h5>
+
+                            <p class="card-text text-muted">
+                                🎤 {{ scene.nomArtiste }}<br>
+                                {# Le filtre |date() formate le DateTime en texte lisible #}
+                                📅 {{ scene.dateEvenement|date('d/m/Y') }}
+                            </p>
+
+                            {# scene.statut appelle isStatut() car c'est un booléen #}
+                            <span class="badge {{ scene.statut ? 'bg-success' : 'bg-secondary' }}">
+                                {{ scene.statut ? 'Soumis' : 'Brouillon' }}
+                            </span>
+
+                        </div>
+                        <div class="card-footer">
+                            {# Lien actif à partir de SF14 #}
+                            {# <a href="{{ path('app_scene_edit', {id: scene.id}) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                Modifier
+                            </a> #}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
