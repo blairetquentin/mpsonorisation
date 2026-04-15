@@ -135,11 +135,11 @@ function addMusicien() {
 }
 
 function filtrerInstruments(input, index) {
-    // On récupère ce que l'utilisateur a tapé en minuscules
+   
     const recherche = input.value.toLowerCase();
     const dropdown = document.getElementById(`dropdown-${index}`);
 
-    // On filtre les instruments selon la recherche
+  
     const resultats = instruments.filter(i => i.libelle.toLowerCase().includes(recherche));
 
     if (resultats.length === 0) {
@@ -147,14 +147,14 @@ function filtrerInstruments(input, index) {
         return;
     }
 
-    // On vide et on remplit le dropdown
+   
     dropdown.innerHTML = '';
     resultats.forEach(i => {
         const item = document.createElement('div');
         item.className = 'dropdown-item';
         item.textContent = i.libelle;
 
-        // Double clic → on ajoute l'instrument comme chip
+       
         item.onclick = () => ajouterInstrument(index, i.id, i.libelle, input, dropdown);
 
         dropdown.appendChild(item);
@@ -166,7 +166,7 @@ function filtrerInstruments(input, index) {
 function ajouterInstrument(index, id, libelle, input, dropdown) {
     const chipsContainer = document.querySelector(`.chips-container[data-index="${index}"]`);
 
-    // On vérifie que l'instrument n'est pas déjà ajouté
+   
     const dejaAjoute = document.querySelector(
         `input[type="hidden"][data-id="${id}"][data-index="${index}"]`
     );
@@ -176,7 +176,7 @@ function ajouterInstrument(index, id, libelle, input, dropdown) {
         return;
     }
 
-    // On crée le chip visible
+  
     const chip = document.createElement('div');
     chip.className = 'instrument-chip';
     chip.innerHTML = `
@@ -185,7 +185,7 @@ function ajouterInstrument(index, id, libelle, input, dropdown) {
     `;
     chipsContainer.appendChild(chip);
 
-    // On crée l'input caché pour envoyer la valeur en POST
+  
     const hiddenInput = document.createElement('input');
     hiddenInput.type = 'hidden';
     hiddenInput.name = `musiciens[${index}][instrument_id][]`;
@@ -194,23 +194,23 @@ function ajouterInstrument(index, id, libelle, input, dropdown) {
     hiddenInput.dataset.index = index;
     chipsContainer.appendChild(hiddenInput);
 
-    // On ferme le dropdown et on vide la recherche
+   
     dropdown.style.display = 'none';
     input.value = '';
 }
 
 function retirerInstrument(bouton, id, index) {
-    // On retire le chip
+    
     bouton.closest('.instrument-chip').remove();
 
-    // On retire l'input caché correspondant
+    
     const input = document.querySelector(
         `input[type="hidden"][data-id="${id}"][data-index="${index}"]`
     );
     if (input) input.remove();
 }
 
-// On ferme les dropdowns si on clique ailleurs
+
 document.addEventListener('click', (e) => {
     if (!e.target.classList.contains('instrument-search')) {
         document.querySelectorAll('.dropdown-instruments').forEach(d => d.style.display = 'none');
@@ -219,7 +219,7 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('btn-add-musicien').addEventListener('click', addMusicien);
 
-// Une ligne par défaut au chargement
+
 addMusicien();
 </script>
 {% endblock %}
