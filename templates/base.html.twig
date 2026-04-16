@@ -13,6 +13,7 @@
 
         {% block javascripts %}
         <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
         {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
@@ -46,7 +47,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Contact</a>
                         </li>
-                        
 
                         {% if app.user %}
                             <li class="nav-item">

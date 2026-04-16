@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ isNew ? 'Nouveau plan de scène' : 'Modifier — ' ~ scene.nomEvenement }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">{{ isNew ? 'Nouveau plan de scène' : 'Modifier — ' ~ scene.nomEvenement }}</h1>
+        <a href="{{ path('app_scene_index') }}" class="btn btn-outline-secondary">
+            Retour
+        </a>
+    </div>
+
+    {{ form_start(form) }}
+
+        <div class="mb-3">
+            {{ form_label(form.nom_evenement) }}
+            {{ form_widget(form.nom_evenement) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.date_evenement) }}
+            {{ form_widget(form.date_evenement) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.nom_artiste) }}
+            {{ form_widget(form.nom_artiste) }}
+        </div>
+
+        <hr>
+        <h2 class="h5 mb-3">Musiciens</h2>
+
+        {% if musiciens is not empty %}
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Musicien</th>
+                            <th>Instruments</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for musicien in musiciens %}
+                        <tr>
+                            <td>{{ musicien.nom }}</td>
+                            <td>{{ musicien.instruments|join(', ') }}</td>
+                            <td>
+                                <form method="POST"
+                                      action="{{ path('app_musicien_delete', {nom: musicien.nom, sceneId: scene.id}) }}"
+                                      onsubmit="return confirm('Supprimer ce musicien ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_musicien' ~ musicien.nom) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <div id="musiciens-container"></div>
+
+        <button type="button" class="btn btn-outline-secondary mb-4" id="btn-add-musicien">
+            + Ajouter un musicien
+        </button>
+
+        <div id="instruments-data" data-instruments="{{ instruments|map(i => {
+            'id': i.id,
+            'libelle': i.libelle
+        })|json_encode }}"></div>
+
+        {{ form_widget(form.submit, {'label': isNew ? 'Créer le plan' : 'Enregistrer'}) }}
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

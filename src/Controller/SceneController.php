@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SceneController extends AbstractController
 {
@@ -39,27 +41,60 @@ class SceneController extends AbstractController
         ]);
     }
 
-    #[Route('/scene/create', name: 'app_scene_create')]
-    public function create(Request $request, EntityManagerInterface $em, InstrumentsRepository $instrumentsRepository): Response
-    {
+    #[Route('/scene/form', name: 'app_scene_form')]
+    #[Route('/scene/{id}/form', name: 'app_scene_form_edit')]
+    public function form(
+        Request $request,
+        EntityManagerInterface $em,
+        InstrumentsRepository $instrumentsRepository,
+        ElementSceneRepository $elementSceneRepository,
+        ?Scene $scene = null
+    ): Response {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
 
-        $scene = new Scene();
+        $isNew = $scene === null;
+
+        if ($isNew) {
+            $scene = new Scene();
+        } else {
+            if ($scene->getUser() !== $this->getUser()) {
+                return $this->redirectToRoute('app_scene_index');
+            }
+        }
+
         $form = $this->createForm(SceneType::class, $scene);
         $form->handleRequest($request);
         $instruments = $instrumentsRepository->findAll();
+        $elements = $isNew ? [] : $elementSceneRepository->findBy(['scene' => $scene]);
+
+        // On regroupe les éléments par nom de musicien
+        $musiciens = [];
+        foreach ($elements as $element) {
+            $nom = $element->getNomMusicien();
+            if (!isset($musiciens[$nom])) {
+                $musiciens[$nom] = [
+                    'nom' => $nom,
+                    'instruments' => [],
+                    'element_id' => $element->getId(),
+                ];
+            }
+            $musiciens[$nom]['instruments'][] = $element->getInstrument()->getLibelle();
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $scene->setUser($this->getUser());
-            $scene->setStatut(false);
-            $em->persist($scene);
+            if ($isNew) {
+                $scene->setUser($this->getUser());
+                $scene->setStatut(false);
+                $em->persist($scene);
+            }
+
             $em->flush();
 
-            $musiciens = $request->request->all('musiciens');
+            $nouveauxMusiciens = $request->request->all('musiciens');
 
-            foreach ($musiciens as $musicien) {
+            foreach ($nouveauxMusiciens as $musicien) {
                 if (empty($musicien['instrument_id'])) {
                     continue;
                 }
@@ -79,16 +114,19 @@ class SceneController extends AbstractController
             }
 
             $em->flush();
-            dd('flush fait !');
 
-            return $this->redirectToRoute('app_scene_index');
+            return $this->redirectToRoute('app_scene_form_edit', ['id' => $scene->getId()]);
         }
 
-        return $this->render('scene/create.html.twig', [
+        return $this->render('scene/form.html.twig', [
             'form' => $form,
+            'scene' => $scene,
+            'musiciens' => $musiciens,
             'instruments' => $instruments,
+            'isNew' => $isNew,
         ]);
     }
+
     #[Route('/scene/{id}/edit', name: 'app_scene_edit')]
     public function edit(Scene $scene, ElementSceneRepository $elementSceneRepository): Response
     {
@@ -106,5 +144,58 @@ class SceneController extends AbstractController
             'scene' => $scene,
             'elements' => $elements,
         ]);
-}
+    }
+
+    #[Route('/scene/{id}/delete', name: 'app_scene_delete', methods: ['POST'])]
+    public function delete(
+        Scene $scene,
+        EntityManagerInterface $em,
+        Request $request,
+        CsrfTokenManagerInterface $csrfTokenManager
+    ): Response {
+        if ($scene->getUser() !== $this->getUser()) {
+            return $this->redirectToRoute('app_scene_index');
+        }
+
+        $token = new CsrfToken('delete' . $scene->getId(), $request->request->get('_token'));
+
+        if (!$csrfTokenManager->isTokenValid($token)) {
+            return $this->redirectToRoute('app_scene_index');
+        }
+
+        $em->remove($scene);
+        $em->flush();
+
+        return $this->redirectToRoute('app_scene_index');
+    }
+
+    #[Route('/musicien/{nom}/delete/{sceneId}', name: 'app_musicien_delete', methods: ['POST'])]
+    public function deleteMusicien(
+        string $nom,
+        int $sceneId,
+        EntityManagerInterface $em,
+        ElementSceneRepository $elementSceneRepository,
+        Request $request,
+        CsrfTokenManagerInterface $csrfTokenManager
+    ): Response {
+        $token = new CsrfToken('delete_musicien' . $nom, $request->request->get('_token'));
+
+        if (!$csrfTokenManager->isTokenValid($token)) {
+            return $this->redirectToRoute('app_scene_index');
+        }
+
+        // On supprime tous les éléments de ce musicien sur cette scène
+        $elements = $elementSceneRepository->findBy([
+            'scene' => $sceneId,
+            'nom_musicien' => $nom,
+        ]);
+
+        foreach ($elements as $element) {
+            $em->remove($element);
+        }
+
+        $em->flush();
+
+        return $this->redirectToRoute('app_scene_form_edit', ['id' => $sceneId]);
+    }
 }

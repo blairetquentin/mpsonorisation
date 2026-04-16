@@ -6,7 +6,6 @@
 <div class="container py-5">
     <h1 class="mb-4">Module Scène</h1>
 
-  
     {% if not connecte %}
         <div class="alert alert-warning">
             <strong>Accès limité.</strong>
@@ -19,12 +18,10 @@
             </a>
         </div>
 
-  
     {% else %}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h5 mb-0">Mes plans de scène</h2>
-          
-            <a href="{{ path('app_scene_create') }}" class="btn btn-primary">
+            <a href="{{ path('app_scene_form') }}" class="btn btn-primary">
                 + Nouveau plan
             </a>
         </div>
@@ -38,28 +35,35 @@
                 <div class="col-md-4">
                     <div class="card h-100">
                         <div class="card-body">
-
-                            
                             <h5 class="card-title">{{ scene.nomEvenement }}</h5>
-
                             <p class="card-text text-muted">
                                 {{ scene.nomArtiste }}<br>
-                               
                                 {{ scene.dateEvenement|date('d/m/Y') }}
                             </p>
-
-                           
                             <span class="badge {{ scene.statut ? 'bg-success' : 'bg-secondary' }}">
                                 {{ scene.statut ? 'Soumis' : 'Brouillon' }}
                             </span>
-
                         </div>
-                        <div class="card-footer">
-        
+                        <div class="card-footer d-flex gap-2">
+                            {% if not scene.statut %}
+                                <a href="{{ path('app_scene_form_edit', {id: scene.id}) }}"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    Modifier
+                                </a>
+                            {% endif %}
                             <a href="{{ path('app_scene_edit', {id: scene.id}) }}"
                                class="btn btn-sm btn-outline-primary">
-                                Modifier
+                                Plan
                             </a>
+                            {% if not scene.statut %}
+                                <form method="POST" action="{{ path('app_scene_delete', {id: scene.id}) }}"
+                                      onsubmit="return confirm('Supprimer ce plan ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ scene.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
