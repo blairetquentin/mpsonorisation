@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\ElementScene;
 use App\Entity\Scene;
 use App\Form\SceneType;
+use App\Repository\ElementSceneRepository;
 use App\Repository\InstrumentsRepository;
 use App\Repository\SceneRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,12 +74,12 @@ class SceneController extends AbstractController
 
                     $instrument = $instrumentsRepository->find($instrumentId);
                     $element->setInstrument($instrument);
-
                     $em->persist($element);
                 }
             }
 
             $em->flush();
+            dd('flush fait !');
 
             return $this->redirectToRoute('app_scene_index');
         }
@@ -88,4 +89,22 @@ class SceneController extends AbstractController
             'instruments' => $instruments,
         ]);
     }
+    #[Route('/scene/{id}/edit', name: 'app_scene_edit')]
+    public function edit(Scene $scene, ElementSceneRepository $elementSceneRepository): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($scene->getUser() !== $this->getUser()) {
+            return $this->redirectToRoute('app_scene_index');
+        }
+
+        $elements = $elementSceneRepository->findBy(['scene' => $scene]);
+
+        return $this->render('scene/edit.html.twig', [
+            'scene' => $scene,
+            'elements' => $elements,
+        ]);
+}
 }

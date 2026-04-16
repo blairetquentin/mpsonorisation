@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plan de scène — {{ scene.nomEvenement }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">🎸 {{ scene.nomEvenement }}</h1>
+            <small class="text-muted">
+                🎤 {{ scene.nomArtiste }} — 📅 {{ scene.dateEvenement|date('d/m/Y') }}
+            </small>
+        </div>
+        <a href="{{ path('app_scene_index') }}" class="btn btn-outline-secondary">
+            ← Retour
+        </a>
+    </div>
+
+    <div class="d-flex gap-4">
+
+        <div class="sidebar-scene border rounded p-3" style="width: 250px; min-width: 250px;">
+            <h2 class="h6 mb-3">🎵 Musiciens</h2>
+
+            {% for element in elements %}
+            <div
+                class="instrument-item border rounded p-2 mb-2"
+                draggable="true"
+                data-id="{{ element.id }}"
+                data-nom="{{ element.nomMusicien }}"
+                data-instrument="{{ element.instrument.libelle }}"
+            >
+                <div class="fw-bold" style="font-size: 0.85rem;">{{ element.nomMusicien }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ element.instrument.libelle }}</div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div
+            id="scene-container"
+            class="border rounded position-relative"
+            style="width: 800px; height: 500px; background-color: #f8f9fa; overflow: hidden;"
+        >
+            <div class="position-absolute text-muted" style="bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 0.8rem;">
+                Scène — Face public
+            </div>
+
+            {% for element in elements %}
+                {% if element.positionX != 0 or element.positionY != 0 %}
+                <div
+                    class="instrument-placed border rounded p-1 position-absolute"
+                    draggable="true"
+                    data-id="{{ element.id }}"
+                    data-nom="{{ element.nomMusicien }}"
+                    data-instrument="{{ element.instrument.libelle }}"
+                    style="
+                        left: {{ element.positionX }}px;
+                        top: {{ element.positionY }}px;
+                        background: white;
+                        font-size: 0.75rem;
+                        cursor: grab;
+                        width: 90px;
+                        text-align: center;
+                    "
+                >
+                    <div class="fw-bold">{{ element.nomMusicien }}</div>
+                    <div class="text-muted">{{ element.instrument.libelle }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

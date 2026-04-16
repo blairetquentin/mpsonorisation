@@ -43,9 +43,9 @@
                             <h5 class="card-title">{{ scene.nomEvenement }}</h5>
 
                             <p class="card-text text-muted">
-                                🎤 {{ scene.nomArtiste }}<br>
+                                {{ scene.nomArtiste }}<br>
                                
-                                📅 {{ scene.dateEvenement|date('d/m/Y') }}
+                                {{ scene.dateEvenement|date('d/m/Y') }}
                             </p>
 
                            
@@ -56,10 +56,10 @@
                         </div>
                         <div class="card-footer">
         
-                            {# <a href="{{ path('app_scene_edit', {id: scene.id}) }}"
+                            <a href="{{ path('app_scene_edit', {id: scene.id}) }}"
                                class="btn btn-sm btn-outline-primary">
                                 Modifier
-                            </a> #}
+                            </a>
                         </div>
                     </div>
                 </div>
