@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
+
 class SceneController extends AbstractController
 {
     #[Route('/scene', name: 'app_scene_index')]
@@ -69,7 +70,7 @@ class SceneController extends AbstractController
         $instruments = $instrumentsRepository->findAll();
         $elements = $isNew ? [] : $elementSceneRepository->findBy(['scene' => $scene]);
 
-        // On regroupe les éléments par nom de musicien
+
         $musiciens = [];
         foreach ($elements as $element) {
             $nom = $element->getNomMusicien();
@@ -77,7 +78,6 @@ class SceneController extends AbstractController
                 $musiciens[$nom] = [
                     'nom' => $nom,
                     'instruments' => [],
-                    'element_id' => $element->getId(),
                 ];
             }
             $musiciens[$nom]['instruments'][] = $element->getInstrument()->getLibelle();
@@ -126,33 +126,8 @@ class SceneController extends AbstractController
             'isNew' => $isNew,
         ]);
     }
-
-    #[Route('/scene/{id}/edit', name: 'app_scene_edit')]
-    public function edit(Scene $scene, ElementSceneRepository $elementSceneRepository): Response
-    {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        if ($scene->getUser() !== $this->getUser()) {
-            return $this->redirectToRoute('app_scene_index');
-        }
-
-        $elements = $elementSceneRepository->findBy(['scene' => $scene]);
-
-        return $this->render('scene/edit.html.twig', [
-            'scene' => $scene,
-            'elements' => $elements,
-        ]);
-    }
-
     #[Route('/scene/{id}/delete', name: 'app_scene_delete', methods: ['POST'])]
-    public function delete(
-        Scene $scene,
-        EntityManagerInterface $em,
-        Request $request,
-        CsrfTokenManagerInterface $csrfTokenManager
-    ): Response {
+    public function delete(Scene $scene,EntityManagerInterface $em,Request $request,CsrfTokenManagerInterface $csrfTokenManager): Response {
         if ($scene->getUser() !== $this->getUser()) {
             return $this->redirectToRoute('app_scene_index');
         }
@@ -168,28 +143,20 @@ class SceneController extends AbstractController
 
         return $this->redirectToRoute('app_scene_index');
     }
-
     #[Route('/musicien/{nom}/delete/{sceneId}', name: 'app_musicien_delete', methods: ['POST'])]
-    public function deleteMusicien(
-        string $nom,
-        int $sceneId,
-        EntityManagerInterface $em,
-        ElementSceneRepository $elementSceneRepository,
-        Request $request,
-        CsrfTokenManagerInterface $csrfTokenManager
-    ): Response {
+    public function deleteMusicien(string $nom,int $sceneId,EntityManagerInterface $em,ElementSceneRepository $elementSceneRepository,Request $request,CsrfTokenManagerInterface $csrfTokenManager): Response {
         $token = new CsrfToken('delete_musicien' . $nom, $request->request->get('_token'));
 
         if (!$csrfTokenManager->isTokenValid($token)) {
             return $this->redirectToRoute('app_scene_index');
         }
 
-        // On supprime tous les éléments de ce musicien sur cette scène
         $elements = $elementSceneRepository->findBy([
             'scene' => $sceneId,
             'nom_musicien' => $nom,
+            
         ]);
-
+dd($elements);
         foreach ($elements as $element) {
             $em->remove($element);
         }

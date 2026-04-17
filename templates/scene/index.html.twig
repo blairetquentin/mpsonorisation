@@ -50,14 +50,8 @@
                                    class="btn btn-sm btn-outline-secondary">
                                     Modifier
                                 </a>
-                            {% endif %}
-                            <a href="{{ path('app_scene_edit', {id: scene.id}) }}"
-                               class="btn btn-sm btn-outline-primary">
-                                Plan
-                            </a>
-                            {% if not scene.statut %}
                                 <form method="POST" action="{{ path('app_scene_delete', {id: scene.id}) }}"
-                                      onsubmit="return confirm('Supprimer ce plan ?')">
+                                    onsubmit="return confirm('Supprimer ce plan ?')">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ scene.id) }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         Supprimer

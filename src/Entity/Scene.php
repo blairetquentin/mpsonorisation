@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\SceneRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: SceneRepository::class)]
 class Scene
@@ -29,6 +31,9 @@ class Scene
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\OneToMany(targetEntity: ElementScene::class, mappedBy: 'scene', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $elementScenes;
 
     public function getId(): ?int
     {
@@ -94,4 +99,33 @@ class Scene
 
         return $this;
     }
+    public function __construct()
+    {
+        $this->elementScenes = new ArrayCollection();
+    }
+
+    public function getElementScenes(): Collection
+    {
+        return $this->elementScenes;
+    }
+
+    public function addElementScene(ElementScene $elementScene): static
+    {
+        if (!$this->elementScenes->contains($elementScene)) {
+            $this->elementScenes->add($elementScene);
+            $elementScene->setScene($this);
+        }
+        return $this;
+    }
+
+    public function removeElementScene(ElementScene $elementScene): static
+    {
+        if ($this->elementScenes->removeElement($elementScene)) {
+            if ($elementScene->getScene() === $this) {
+                $elementScene->setScene(null);
+            }
+        }
+        return $this;
+    }
+    
 }

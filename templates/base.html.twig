@@ -12,8 +12,6 @@
         {% endblock %}
 
         {% block javascripts %}
-        <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('js/app.js') }}"></script>
         {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
@@ -99,5 +97,7 @@
                 </p>
             </div>
         </footer>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>

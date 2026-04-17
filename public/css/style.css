@@ -43,7 +43,6 @@ body {
     background-color: #f8f9fa;
 }
 
-/* ---- CHIPS INSTRUMENTS ---- */
 .instrument-chip {
     display: inline-flex;
     align-items: center;

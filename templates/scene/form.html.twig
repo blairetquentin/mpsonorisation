@@ -32,35 +32,33 @@
         <h2 class="h5 mb-3">Musiciens</h2>
 
         {% if musiciens is not empty %}
-            <div class="table-responsive mb-4">
-                <table class="table table-bordered align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Musicien</th>
-                            <th>Instruments</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for musicien in musiciens %}
-                        <tr>
-                            <td>{{ musicien.nom }}</td>
-                            <td>{{ musicien.instruments|join(', ') }}</td>
-                            <td>
-                                <form method="POST"
-                                      action="{{ path('app_musicien_delete', {nom: musicien.nom, sceneId: scene.id}) }}"
-                                      onsubmit="return confirm('Supprimer ce musicien ?')">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_musicien' ~ musicien.nom) }}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        Supprimer
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <table class="table table-bordered align-middle mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Musicien</th>
+                        <th>Instruments</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for musicien in musiciens %}
+                    <tr>
+                        <td>{{ musicien.nom }}</td>
+                        <td>{{ musicien.instruments|join(', ') }}</td>
+                        <td>
+                            <form method="POST"
+                                action="{{ path('app_musicien_delete', {nom: musicien.nom, sceneId: scene.id}) }}"
+                                onsubmit="return confirm('Supprimer ce musicien ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_musicien' ~ musicien.nom) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
 
         <div id="musiciens-container"></div>
@@ -69,12 +67,13 @@
             + Ajouter un musicien
         </button>
 
-        <div id="instruments-data" data-instruments="{{ instruments|map(i => {
-            'id': i.id,
-            'libelle': i.libelle
-        })|json_encode }}"></div>
+        <div
+            id="instruments-data"
+            data-instruments="{{ instruments|map(i => {'id': i.id, 'libelle': i.libelle})|json_encode }}"
+            style="display:none;"
+        ></div>
 
-        {{ form_widget(form.submit, {'label': isNew ? 'Créer le plan' : 'Enregistrer'}) }}
+        {{ form_widget(form.submit) }}
 
     {{ form_end(form) }}
 </div>

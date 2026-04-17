@@ -5,8 +5,8 @@ namespace App\Form;
 use App\Entity\Scene;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,20 +17,20 @@ class SceneType extends AbstractType
         $builder
             ->add('nom_evenement', TextType::class, [
                 'label' => 'Nom de l\'événement',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('date_evenement', DateType::class, [
                 'label' => 'Date de l\'événement',
                 'widget' => 'single_text',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('nom_artiste', TextType::class, [
                 'label' => 'Nom de l\'artiste',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Continuer →',
-                'attr' => ['class' => 'btn btn-primary mt-3']
+                'label' => 'Enregistrer',
+                'attr' => ['class' => 'btn btn-primary mt-3'],
             ])
         ;
     }
@@ -41,4 +41,5 @@ class SceneType extends AbstractType
             'data_class' => Scene::class,
         ]);
     }
+    
 }
