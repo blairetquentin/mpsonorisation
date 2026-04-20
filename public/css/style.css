@@ -63,3 +63,28 @@ body {
     font-size: 0.85rem;
     line-height: 1;
 }
+
+#scene-container {
+    width: 1000px;
+    height: 500px;
+}
+
+.instrument-item {
+    cursor: grab;
+    user-select: none;
+}
+
+.instrument-placed {
+    cursor: grab;
+    user-select: none;
+}
+
+.scene-label {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+}
+
+

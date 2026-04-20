@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plan — {{ scene.nomEvenement }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{{ scene.nomEvenement }}</h1>
+            <small class="text-muted">
+                {{ scene.nomArtiste }} — {{ scene.dateEvenement|date('d/m/Y') }}
+            </small>
+        </div>
+        <a href="{{ path('app_scene_index') }}" class="btn btn-outline-secondary">
+            Retour
+        </a>
+    </div>
+
+    <div class="d-flex gap-4">
+
+        {# ---- SIDEBAR ---- #}
+        <div style="width: 220px; min-width: 220px;">
+            <h2 class="h6 mb-3">Musiciens</h2>
+            {% for element in elements %}
+            <div
+                class="instrument-item border rounded p-2 mb-2"
+                data-id="{{ element.id }}"
+                data-nom="{{ element.nomMusicien }}"
+                data-instrument="{{ element.instrument.libelle }}"
+                data-url="{{ element.instrument.urlInstrument }}"
+                data-largeur="{{ element.instrument.largeur }}"
+                data-hauteur="{{ element.instrument.hauteur }}"
+            >
+                <img
+                    src="{{ asset(element.instrument.urlInstrument) }}"
+                    alt="{{ element.instrument.libelle }}"
+                    style="width: {{ element.instrument.largeur }}px; height: {{ element.instrument.hauteur }}px; object-fit: contain;"
+                >
+            </div>
+            {% endfor %}
+        </div>
+
+        {# ---- SCENE ---- #}
+        <div
+            id="scene-container"
+            class="border rounded position-relative bg-light"
+        >
+            <div class="scene-label text-muted">Face public</div>
+
+            {% for element in elements %}
+                {% if element.positionX != 0 or element.positionY != 0 %}
+                <div
+                    class="instrument-placed position-absolute"
+                    data-id="{{ element.id }}"
+                    data-nom="{{ element.nomMusicien }}"
+                    data-instrument="{{ element.instrument.libelle }}"
+                    data-url="{{ element.instrument.urlInstrument }}"
+                    data-largeur="{{ element.instrument.largeur }}"
+                    data-hauteur="{{ element.instrument.hauteur }}"
+                    style="left: {{ element.positionX }}px; top: {{ element.positionY }}px;"
+                >
+                    <img
+                        src="{{ asset(element.instrument.urlInstrument) }}"
+                        alt="{{ element.instrument.libelle }}"
+                        style="width: {{ element.instrument.largeur }}px; height: {{ element.instrument.hauteur }}px; object-fit: contain;"
+                    >
+                </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

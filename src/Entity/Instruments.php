@@ -19,6 +19,12 @@ class Instruments
     #[ORM\Column(length: 255)]
     private ?string $url_instrument = null;
 
+    #[ORM\Column]
+    private ?int $largeur = null;
+
+    #[ORM\Column]
+    private ?int $hauteur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +50,30 @@ class Instruments
     public function setUrlInstrument(string $url_instrument): static
     {
         $this->url_instrument = $url_instrument;
+
+        return $this;
+    }
+
+    public function getLargeur(): ?int
+    {
+        return $this->largeur;
+    }
+
+    public function setLargeur(int $largeur): static
+    {
+        $this->largeur = $largeur;
+
+        return $this;
+    }
+
+    public function getHauteur(): ?int
+    {
+        return $this->hauteur;
+    }
+
+    public function setHauteur(int $hauteur): static
+    {
+        $this->hauteur = $hauteur;
 
         return $this;
     }
