@@ -19,36 +19,42 @@
 
     <div class="d-flex gap-4">
 
-        {# ---- SIDEBAR ---- #}
+        {# ---- Sidebar gauche : musiciens ---- #}
         <div style="width: 220px; min-width: 220px;">
             <h2 class="h6 mb-3">Musiciens</h2>
             {% for element in elements %}
-            <div
-                class="instrument-item border rounded p-2 mb-2"
-                data-id="{{ element.id }}"
-                data-nom="{{ element.nomMusicien }}"
-                data-instrument="{{ element.instrument.libelle }}"
-                data-url="{{ element.instrument.urlInstrument }}"
-                data-largeur="{{ element.instrument.largeur }}"
-                data-hauteur="{{ element.instrument.hauteur }}"
-            >
-                <img
-                    src="{{ asset(element.instrument.urlInstrument) }}"
-                    alt="{{ element.instrument.libelle }}"
-                    style="width: {{ element.instrument.largeur }}px; height: {{ element.instrument.hauteur }}px; object-fit: contain;"
+                {# On n'affiche que les vrais instruments, pas les équipements #}
+                {% if element.instrument.type == 'instrument' %}
+                <div
+                    class="instrument-item border rounded p-2 mb-2"
+                    data-id="{{ element.id }}"
+                    data-nom="{{ element.nomMusicien }}"
+                    data-instrument="{{ element.instrument.libelle }}"
+                    data-url="{{ element.instrument.urlInstrument }}"
+                    data-largeur="{{ element.instrument.largeur }}"
+                    data-hauteur="{{ element.instrument.hauteur }}"
+                    data-type="instrument"
                 >
-            </div>
+                    <img
+                        src="{{ asset(element.instrument.urlInstrument) }}"
+                        alt="{{ element.instrument.libelle }}"
+                        style="width: {{ element.instrument.largeur }}px; height: {{ element.instrument.hauteur }}px; object-fit: contain;"
+                    >
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
 
-        {# ---- SCENE ---- #}
+        {# ---- Zone centrale : la scène ---- #}
         <div
             id="scene-container"
             class="border rounded position-relative bg-light"
+            data-scene-id="{{ scene.id }}"
         >
             <div class="scene-label text-muted">Face public</div>
 
             {% for element in elements %}
+                {# On affiche tous les éléments déjà posés (instruments ET équipements) #}
                 {% if element.positionX != 0 or element.positionY != 0 %}
                 <div
                     class="instrument-placed position-absolute"
@@ -58,6 +64,7 @@
                     data-url="{{ element.instrument.urlInstrument }}"
                     data-largeur="{{ element.instrument.largeur }}"
                     data-hauteur="{{ element.instrument.hauteur }}"
+                    data-type="{{ element.instrument.type }}"
                     style="left: {{ element.positionX }}px; top: {{ element.positionY }}px;"
                 >
                     <img
@@ -70,6 +77,109 @@
             {% endfor %}
 
         </div>
+
+        {# ---- Sidebar droite : équipements ---- #}
+        <div style="width: 220px; min-width: 220px;">
+            <h2 class="h6 mb-3">Equipements</h2>
+            {% for equipement in equipements %}
+            <div
+                class="instrument-item border rounded p-2 mb-2"
+                data-id="equipement-{{ equipement.id }}"
+                data-nom="{{ equipement.libelle }}"
+                data-instrument="{{ equipement.libelle }}"
+                data-url="{{ equipement.urlInstrument }}"
+                data-largeur="{{ equipement.largeur }}"
+                data-hauteur="{{ equipement.hauteur }}"
+                data-type="equipement"
+            >
+                <img
+                    src="{{ asset(equipement.urlInstrument) }}"
+                    alt="{{ equipement.libelle }}"
+                    style="width: {{ equipement.largeur }}px; height: {{ equipement.hauteur }}px; object-fit: contain;"
+                >
+                <div style="font-size: 0.75rem; text-align: center;">{{ equipement.libelle }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
     </div>
+    {# ---- Config batterie — panneau fixe, caché par défaut ---- #}
+    {# Il s'affiche automatiquement quand une batterie est posée sur la scène #}
+    <div id="panneau-batterie" class="mt-4" style="display: none;">
+        <h2 class="h5 mb-3">🥁 Configuration de la batterie</h2>
+
+        <div class="row g-3">
+            <div class="col-auto">
+                <label class="form-label">Nombre de toms</label>
+                <input type="number" id="batterie-toms" class="form-control" min="0" value="0">
+            </div>
+            <div class="col-auto">
+                <label class="form-label">Nombre de cymbales</label>
+                <input type="number" id="batterie-cymbales" class="form-control" min="0" value="0">
+            </div>
+            <div class="col-auto">
+                <label class="form-label">Caisse claire</label>
+                <input type="number" id="batterie-caisse-claire" class="form-control" min="0" value="0">
+            </div>
+            <div class="col-auto">
+                <label class="form-label">Grosse caisse</label>
+                <input type="number" id="batterie-grosse-caisse" class="form-control" min="0" value="0">
+            </div>
+            <div class="col-auto">
+                <label class="form-label">Charleston</label>
+                <input type="number" id="batterie-charleston" class="form-control" min="0" value="0">
+            </div>
+        </div>
+
+        {# L'id de l'ElementScene de la batterie posée, rempli par le JS #}
+        <input type="hidden" id="batterie-element-id" value="">
+
+        <button type="button" id="btn-sauvegarder-batterie" class="btn btn-primary mt-3">
+            Sauvegarder la configuration
+        </button>
+    </div>
+    {# ---- SF15 — Récapitulatif des équipements posés ---- #}
+    {# Le tbody est volontairement vide : c'est le JS (mettreAJourRecap) qui le remplit #}
+   {# ---- SF15 — Récap équipements + config batterie côte à côte ---- #}
+    <div class="mt-4 d-flex gap-4">
+
+        {# Tableau récap équipements #}
+        <div>
+            <h2 class="h5 mb-3">Récapitulatif des équipements</h2>
+            <table class="table table-bordered w-auto" id="recap-equipements">
+                <thead class="table-light">
+                    <tr>
+                        <th>Équipement</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# Rempli dynamiquement par le JS #}
+                </tbody>
+            </table>
+        </div>
+
+        {# Tableau config batterie — caché par défaut, affiché par le JS #}
+        <div id="recap-batterie" style="display: none;">
+            <h2 class="h5 mb-3">🥁 Configuration batterie</h2>
+            <table class="table table-bordered w-auto">
+                <thead class="table-light">
+                    <tr>
+                        <th>Élément</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Toms</td><td id="recap-toms">0</td></tr>
+                    <tr><td>Cymbales</td><td id="recap-cymbales">0</td></tr>
+                    <tr><td>Caisse claire</td><td id="recap-caisse-claire">0</td></tr>
+                    <tr><td>Grosse caisse</td><td id="recap-grosse-caisse">0</td></tr>
+                    <tr><td>Charleston</td><td id="recap-charleston">0</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
 </div>
 {% endblock %}

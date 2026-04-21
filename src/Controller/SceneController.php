@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\ConfigBatterieRepository;
+use App\Entity\ConfigBatterie;
 
 
 class SceneController extends AbstractController
@@ -43,15 +45,8 @@ class SceneController extends AbstractController
         ]);
     }
 
-    #[Route('/scene/form', name: 'app_scene_form')]
     #[Route('/scene/{id}/form', name: 'app_scene_form_edit')]
-    public function form(
-        Request $request,
-        EntityManagerInterface $em,
-        InstrumentsRepository $instrumentsRepository,
-        ElementSceneRepository $elementSceneRepository,
-        ?Scene $scene = null
-    ): Response {
+    public function form(Request $request,EntityManagerInterface $em,InstrumentsRepository $instrumentsRepository,ElementSceneRepository $elementSceneRepository,?Scene $scene = null): Response {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
@@ -149,8 +144,8 @@ class SceneController extends AbstractController
         return new JsonResponse(['success' => true]);
     }
     #[Route('/scene/{id}/plan', name: 'app_scene_plan')]
-        public function plan(Scene $scene, ElementSceneRepository $elementSceneRepository): Response
-        {
+    public function plan(Scene $scene, ElementSceneRepository $elementSceneRepository, InstrumentsRepository $instrumentsRepository): Response
+    {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
@@ -161,11 +156,35 @@ class SceneController extends AbstractController
 
         $elements = $elementSceneRepository->findBy(['scene' => $scene]);
 
-        return $this->render('scene/plan.html.twig', [
-            'scene' => $scene,
-            'elements' => $elements,
-        ]);
-        }
+      
+        $equipements = $instrumentsRepository->findBy(['type' => 'equipement']);
+
+       
+        $recapEquipements = [];
+
+        foreach ($elements as $element) {
+         
+            if (
+                $element->getInstrument()->getType() === 'equipement'
+                && ($element->getPositionX() != 0 || $element->getPositionY() != 0)
+            ) {
+                $libelle = $element->getInstrument()->getLibelle();
+
+                if (!isset($recapEquipements[$libelle])) {
+                    $recapEquipements[$libelle] = 0;
+                }
+
+                $recapEquipements[$libelle]++;
+            }
+    }
+
+    return $this->render('scene/plan.html.twig', [
+        'scene' => $scene,
+        'elements' => $elements,
+        'equipements' => $equipements,
+        'recapEquipements' => $recapEquipements, // ← nouveau
+    ]);
+}
 
      #[Route('/scene/{id}/delete', name: 'app_scene_delete', methods: ['POST'])]
         public function delete(Scene $scene,EntityManagerInterface $em,Request $request,CsrfTokenManagerInterface $csrfTokenManager): Response {
@@ -205,5 +224,92 @@ class SceneController extends AbstractController
 
         return $this->redirectToRoute('app_scene_form_edit', ['id' => $sceneId]);
     }
-   
+    #[Route('/scene/{id}/equipement/{instrumentId}', name: 'app_scene_add_equipement', methods: ['POST'])]
+    public function addEquipement(Scene $scene,int $instrumentId,Request $request,EntityManagerInterface $em,InstrumentsRepository $instrumentsRepository): JsonResponse {
+        if (!$this->getUser()) {
+            return new JsonResponse(['success' => false], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        $instrument = $instrumentsRepository->find($instrumentId);
+
+        if (!$instrument) {
+            return new JsonResponse(['success' => false], 404);
+        }
+
+        $element = new ElementScene();
+        $element->setScene($scene);
+        $element->setNomMusicien($instrument->getLibelle());
+        $element->setInstrument($instrument);
+        $element->setQuantite(1);
+        $element->setPositionX($data['positionX']);
+        $element->setPositionY($data['positionY']);
+
+        $em->persist($element);
+        $em->flush();
+
+        
+        return new JsonResponse([
+            'success' => true,
+            'id' => $element->getId(),
+        ]);
+    }
+    #[Route('/scene/element/{id}/batterie', name: 'app_scene_config_batterie', methods: ['POST'])]
+    public function configBatterie(
+        ElementScene $element,
+        Request $request,
+        EntityManagerInterface $em,
+        ConfigBatterieRepository $configBatterieRepository
+    ): JsonResponse {
+        if (!$this->getUser()) {
+            return new JsonResponse(['success' => false], 403);
+        }
+
+        // On récupère les données JSON envoyées par le JS
+        $data = json_decode($request->getContent(), true);
+
+        // On cherche si une config existe déjà pour cet élément
+        $config = $configBatterieRepository->findOneBy(['elementScene' => $element]);
+
+        // Si elle n'existe pas, on en crée une nouvelle
+        if (!$config) {
+            $config = new ConfigBatterie();
+            $config->setElementScene($element);
+            $em->persist($config);
+        }
+
+        // On met à jour les valeurs
+        $config->setNbToms($data['nbToms'] ?? null);
+        $config->setNbCymbales($data['nbCymbales'] ?? null);
+        $config->setNbCaisseClaire($data['nbCaisseClaire'] ?? null);
+        $config->setNbGrosseCaisse($data['nbGrosseCaisse'] ?? null);
+        $config->setNbCharleston($data['nbCharleston'] ?? null);
+
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/scene/element/{id}/batterie/delete', name: 'app_scene_delete_batterie', methods: ['POST'])]
+    public function deleteBatterie(
+        ElementScene $element,
+        EntityManagerInterface $em,
+        ConfigBatterieRepository $configBatterieRepository
+    ): JsonResponse {
+        if (!$this->getUser()) {
+            return new JsonResponse(['success' => false], 403);
+        }
+
+        // On cherche la config liée à cet élément et on la supprime
+        $config = $configBatterieRepository->findOneBy(['elementScene' => $element]);
+
+        if ($config) {
+            $em->remove($config);
+            $em->flush();
+        }
+
+        return new JsonResponse(['success' => true]);
+    }
+
 }

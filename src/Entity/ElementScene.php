@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ElementSceneRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ElementSceneRepository::class)]
@@ -32,6 +34,17 @@ class ElementScene
 
     #[ORM\Column(length: 100)]
     private ?string $nom_musicien = null;
+
+    /**
+     * @var Collection<int, ConfigBatterie>
+     */
+    #[ORM\OneToMany(targetEntity: ConfigBatterie::class, mappedBy: 'elementScene')]
+    private Collection $configBatteries;
+
+    public function __construct()
+    {
+        $this->configBatteries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -109,5 +122,35 @@ class ElementScene
 
         return $this;
 }
+
+    /**
+     * @return Collection<int, ConfigBatterie>
+     */
+    public function getConfigBatteries(): Collection
+    {
+        return $this->configBatteries;
+    }
+
+    public function addConfigBattery(ConfigBatterie $configBattery): static
+    {
+        if (!$this->configBatteries->contains($configBattery)) {
+            $this->configBatteries->add($configBattery);
+            $configBattery->setElementScene($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConfigBattery(ConfigBatterie $configBattery): static
+    {
+        if ($this->configBatteries->removeElement($configBattery)) {
+            // set the owning side to null (unless already changed)
+            if ($configBattery->getElementScene() === $this) {
+                $configBattery->setElementScene(null);
+            }
+        }
+
+        return $this;
+    }
 }
 

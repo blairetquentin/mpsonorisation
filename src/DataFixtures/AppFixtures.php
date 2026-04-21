@@ -6,15 +6,19 @@ use App\Entity\Categorie;
 use App\Entity\SousCategorie;
 use App\Entity\Materiel;
 use App\Entity\Instruments;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(
+        private UserPasswordHasherInterface $hasher
+    ) {}
+
     public function load(ObjectManager $manager): void
     {
-
-
         $data = [
             'Sonorisation' => [
                 'Enceintes' => [
@@ -84,28 +88,51 @@ class AppFixtures extends Fixture
             }
         }
 
-       
+        // ---- INSTRUMENTS ----
+    $instrumentsData = [
+        ['libelle' => 'Guitare électrique', 'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-electrique.png'],
+        ['libelle' => 'Guitare basse',       'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-basse.png'],
+        ['libelle' => 'Guitare acoustique',  'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Batterie',            'type' => 'instrument', 'largeur' => 200, 'hauteur' => 150, 'url' => '/images/instruments/tambour.png'],
+        ['libelle' => 'Clavier / Piano',     'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/musique.png'],
+        ['libelle' => 'Violon',              'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Saxophone',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Trompette',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Flûte',               'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Micro chant',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/micro.png'],
+        ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
+    ];
 
-        $instrumentsData = [
-            'Guitare électrique',
-            'Guitare basse',
-            'Guitare acoustique',
-            'Batterie',
-            'Clavier / Piano',
-            'Violon',
-            'Saxophone',
-            'Trompette',
-            'Flûte',
-            'Chant',
-            'Micro chant',
-        ];
+    foreach ($instrumentsData as $d) {
+        $instrument = new Instruments();
+        $instrument->setLibelle($d['libelle']);
+        $instrument->setType($d['type']);
+        $instrument->setLargeur($d['largeur']);
+        $instrument->setHauteur($d['hauteur']);
+        $instrument->setUrlInstrument($d['url']);
+        $manager->persist($instrument);
+    }
 
-        foreach ($instrumentsData as $libelle) {
-            $instrument = new Instruments();
-            $instrument->setLibelle($libelle);
-            $instrument->setUrlInstrument('/images/instruments/default.svg');
-            $manager->persist($instrument);
-        }
+        // ---- UTILISATEURS ----
+        $admin = new User();
+        $admin->setNom('Admin');
+        $admin->setPrenom('Super');
+        $admin->setEmail('admin@mpsonorisation.fr');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setDateNaissance(new \DateTime('1990-01-01'));
+        $admin->setPassword($this->hasher->hashPassword($admin, 'admin1234'));
+        $manager->persist($admin);
+
+        $user = new User();
+        $user->setNom('Dupont');
+        $user->setPrenom('Jean');
+        $user->setEmail('jean@mpsonorisation.fr');
+        $user->setRoles(['ROLE_USER']);
+        $user->setDateNaissance(new \DateTime('1995-06-15'));
+        $user->setPassword($this->hasher->hashPassword($user, 'user1234'));
+        $manager->persist($user);
 
         $manager->flush();
     }
