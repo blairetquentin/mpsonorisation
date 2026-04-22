@@ -1,6 +1,5 @@
 // ============================================================
 // IIFE 1 — FORMULAIRE SCENE (création / modification)
-// S'active uniquement si le conteneur #musiciens-container existe
 // ============================================================
 (function() {
     const musicienContainer = document.getElementById('musiciens-container');
@@ -11,7 +10,6 @@
 
     let count = 0;
 
-    // ---- Ajoute une nouvelle ligne musicien dans le formulaire ----
     function addMusicien() {
         const div = document.createElement('div');
         div.className = 'musicien-row border rounded p-3 mb-3';
@@ -51,7 +49,6 @@
         count++;
     }
 
-    // ---- Filtre la liste d'instruments selon la saisie ----
     window.filtrerInstruments = function(input, index) {
         const recherche = input.value.toLowerCase();
         const dropdown = document.getElementById(`dropdown-${index}`);
@@ -74,7 +71,6 @@
         dropdown.style.display = 'block';
     }
 
-    // ---- Ajoute un instrument comme chip sur la ligne musicien ----
     window.ajouterInstrument = function(index, id, libelle, input, dropdown) {
         const chipsContainer = document.querySelector(`.chips-container[data-index="${index}"]`);
 
@@ -107,7 +103,6 @@
         input.value = '';
     }
 
-    // ---- Retire un instrument de la ligne musicien ----
     window.retirerInstrument = function(bouton, id, index) {
         bouton.closest('.instrument-chip').remove();
 
@@ -117,7 +112,6 @@
         if (input) input.remove();
     }
 
-    // ---- Ferme tous les dropdowns si on clique ailleurs ----
     document.addEventListener('click', (e) => {
         if (!e.target.classList.contains('instrument-search')) {
             document.querySelectorAll('.dropdown-instruments').forEach(d => {
@@ -133,8 +127,7 @@
 
 
 // ============================================================
-// IIFE 2 — PLAN DE SCENE (drag & drop + récap équipements + config batterie)
-// S'active uniquement si le conteneur #scene-container existe
+// IIFE 2 — PLAN DE SCENE (drag & drop + récap + config batterie + suggestions)
 // ============================================================
 (function() {
     const sceneContainer = document.getElementById('scene-container');
@@ -145,7 +138,6 @@
     let offsetX = 0;
     let offsetY = 0;
 
-    // ---- Branche les événements mousedown sur un élément draggable ----
     function brangherEvenements(item) {
         item.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -170,31 +162,29 @@
     document.querySelectorAll('.instrument-item').forEach(item => brangherEvenements(item));
     document.querySelectorAll('.instrument-placed').forEach(item => brangherEvenements(item));
 
-    // ---- Au chargement : masquer dans la sidebar les éléments déjà posés ----
+    // Au chargement : masquer dans la sidebar les éléments déjà posés
     document.querySelectorAll('.instrument-placed').forEach(item => {
         const id = item.dataset.id;
         const sidebarItem = document.querySelector(`.instrument-item[data-id="${id}"]`);
         if (sidebarItem) sidebarItem.style.display = 'none';
     });
 
-    // ---- Au chargement : afficher le panneau batterie si une batterie est déjà posée ----
+    // Au chargement : afficher le panneau batterie si une batterie est déjà posée
     document.querySelectorAll('.instrument-placed').forEach(el => {
         if (el.dataset.instrument === 'Batterie') {
             afficherPanneauBatterie(el.dataset.id);
         }
     });
 
-    // ---- Au chargement : calculer le récap initial ----
+    // Au chargement : calculer le récap initial
     mettreAJourRecap();
 
-    // ---- Le clone suit la souris ----
     document.addEventListener('mousemove', (e) => {
         if (!clone) return;
         clone.style.left = (e.pageX - offsetX) + 'px';
         clone.style.top = (e.pageY - offsetY) + 'px';
     });
 
-    // ---- Au relâché de la souris : on pose l'élément ----
     document.addEventListener('mouseup', (e) => {
         if (!clone || !elementGlisse) return;
 
@@ -219,44 +209,37 @@
         elementGlisse = null;
     });
 
-    // ---- Sauvegarde la position en base via AJAX ----
     function sauvegarderPosition(element, posX, posY) {
         const type = element.dataset.type;
+        const id   = element.dataset.id;
 
-        if (type === 'equipement') {
-            const sceneId = sceneContainer.dataset.sceneId;
-            const instrumentId = element.dataset.id.replace('equipement-', '');
+        if (type === 'equipement' && id.startsWith('equipement-')) {
+            const sceneId      = sceneContainer.dataset.sceneId;
+            const instrumentId = id.replace('equipement-', '');
 
             fetch(`/scene/${sceneId}/equipement/${instrumentId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ positionX: posX, positionY: posY }),
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    afficherElementSurScene(data.id, posX, posY, element);
-                }
+                if (data.success) afficherElementSurScene(data.id, posX, posY, element);
             });
 
         } else {
-            const id = element.dataset.id;
-
             fetch(`/scene/element/${id}/position`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ positionX: posX, positionY: posY }),
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    afficherElementSurScene(id, posX, posY, element);
-                }
+                if (data.success) afficherElementSurScene(id, posX, posY, element);
             });
         }
     }
 
-    // ---- Affiche ou déplace un élément sur la scène ----
     function afficherElementSurScene(id, posX, posY, source) {
         let existant = sceneContainer.querySelector(`.instrument-placed[data-id="${id}"]`);
 
@@ -293,20 +276,16 @@
             brangherEvenements(div);
         }
 
-        // On masque dans la sidebar gauche
         const sidebarItem = document.querySelector(`.instrument-item[data-id="${id}"]`);
         if (sidebarItem) sidebarItem.style.display = 'none';
 
-        // On recalcule le récap
         mettreAJourRecap();
 
-        // Si c'est une batterie, on affiche le panneau de config
         if (source.dataset.instrument === 'Batterie') {
             afficherPanneauBatterie(id);
         }
     }
 
-    // ---- Double-clic : retirer un élément du plan ----
     sceneContainer.addEventListener('dblclick', (e) => {
         const elementPose = e.target.closest('.instrument-placed');
         if (!elementPose) return;
@@ -318,7 +297,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ positionX: 0, positionY: 0 }),
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.success) {
                 elementPose.remove();
@@ -328,7 +307,6 @@
 
                 mettreAJourRecap();
 
-                // Si c'est une batterie, on cache le panneau et on supprime la config en base
                 if (elementPose.dataset.instrument === 'Batterie') {
                     cacherPanneauBatterie();
                     fetch(`/scene/element/${id}/batterie/delete`, { method: 'POST' });
@@ -337,69 +315,105 @@
         });
     });
 
-    // ---- SF15 — Met à jour le tableau récap des équipements en temps réel ----
-    function mettreAJourRecap() {
-        const elementsPoses = sceneContainer.querySelectorAll('.instrument-placed');
+    // ---- Récap équipements en temps réel ----
+   function mettreAJourRecap() {
+    const elementsPoses = sceneContainer.querySelectorAll('.instrument-placed');
+    const compteurEquip = {};
+    const compteurInstr = {};
 
-        const compteur = {};
-
-        elementsPoses.forEach(el => {
-            if (el.dataset.type === 'equipement') {
-                const libelle = el.dataset.instrument;
-                if (!compteur[libelle]) compteur[libelle] = 0;
-                compteur[libelle]++;
-            }
-        });
-
-        const tbody = document.querySelector('#recap-equipements tbody');
-        if (!tbody) return;
-
-        tbody.innerHTML = '';
-
-        const libelles = Object.keys(compteur);
-
-        if (libelles.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="text-muted">Aucun équipement posé.</td></tr>';
-            return;
+    elementsPoses.forEach(el => {
+        if (el.dataset.type === 'equipement') {
+            const libelle = el.dataset.instrument;
+            if (!compteurEquip[libelle]) compteurEquip[libelle] = 0;
+            compteurEquip[libelle]++;
+        } else {
+            const libelle = el.dataset.instrument;
+            if (!compteurInstr[libelle]) compteurInstr[libelle] = 0;
+            compteurInstr[libelle]++;
         }
+    });
 
-        libelles.forEach(libelle => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${libelle}</td><td>${compteur[libelle]}</td>`;
-            tbody.appendChild(tr);
-        });
+    // Récap équipements
+    const tbodyEquip = document.querySelector('#recap-equipements tbody');
+    if (tbodyEquip) {
+        tbodyEquip.innerHTML = '';
+        const libelles = Object.keys(compteurEquip);
+        if (libelles.length === 0) {
+            tbodyEquip.innerHTML = '<tr><td colspan="2" class="text-muted">Aucun équipement posé.</td></tr>';
+        } else {
+            libelles.forEach(libelle => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${libelle}</td><td>${compteurEquip[libelle]}</td>`;
+                tbodyEquip.appendChild(tr);
+            });
+        }
     }
 
+    // Récap instruments
+    const tbodyInstr = document.querySelector('#recap-instruments tbody');
+    if (tbodyInstr) {
+        tbodyInstr.innerHTML = '';
+        const libelles = Object.keys(compteurInstr);
+        if (libelles.length === 0) {
+            tbodyInstr.innerHTML = '<tr><td colspan="2" class="text-muted">Aucun instrument posé.</td></tr>';
+        } else {
+            libelles.forEach(libelle => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${libelle}</td><td>${compteurInstr[libelle]}</td>`;
+                tbodyInstr.appendChild(tr);
+            });
+        }
+    }
+}
     // ---- Config batterie — affiche le panneau ----
-   function afficherPanneauBatterie(elementId) {
+    function afficherPanneauBatterie(elementId) {
         const panneau = document.getElementById('panneau-batterie');
         if (!panneau) return;
 
         document.getElementById('batterie-element-id').value = elementId;
         panneau.style.display = 'block';
 
-        // On affiche aussi le tableau récap batterie
         const recapBatterie = document.getElementById('recap-batterie');
         if (recapBatterie) recapBatterie.style.display = 'block';
     }
-        // ---- Config batterie — cache le panneau et remet à zéro ----
-        function cacherPanneauBatterie() {
+
+    // ---- Config batterie — cache le panneau et remet à zéro ----
+    function cacherPanneauBatterie() {
         const panneau = document.getElementById('panneau-batterie');
         if (!panneau) return;
 
         panneau.style.display = 'none';
 
-        // On cache aussi le tableau récap batterie
         const recapBatterie = document.getElementById('recap-batterie');
         if (recapBatterie) recapBatterie.style.display = 'none';
 
-        // On remet à zéro
-        document.getElementById('batterie-element-id').value = '';
-        document.getElementById('batterie-toms').value = 0;
-        document.getElementById('batterie-cymbales').value = 0;
+        document.getElementById('batterie-element-id').value  = '';
+        document.getElementById('batterie-toms').value         = 0;
+        document.getElementById('batterie-cymbales').value     = 0;
         document.getElementById('batterie-caisse-claire').value = 0;
         document.getElementById('batterie-grosse-caisse').value = 0;
-        document.getElementById('batterie-charleston').value = 0;
+        document.getElementById('batterie-charleston').value   = 0;
+    }
+
+    // ---- Affiche le tableau matériel suggéré ----
+    function afficherSuggestions(suggestions) {
+        const wrapper = document.getElementById('recap-suggestions');
+        const tbody   = document.querySelector('#recap-suggestions tbody');
+        if (!tbody || !wrapper) return;
+
+        tbody.innerHTML = '';
+
+        if (suggestions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" class="text-muted">Aucune suggestion.</td></tr>';
+        } else {
+            suggestions.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${s.libelle}</td><td>${s.quantite}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        wrapper.style.display = 'block';
     }
 
     // ---- Bouton sauvegarder la config batterie ----
@@ -409,6 +423,7 @@
             const elementId = document.getElementById('batterie-element-id').value;
             if (!elementId) return;
 
+            // Étape 1 — on sauvegarde la config batterie
             fetch(`/scene/element/${elementId}/batterie`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -420,18 +435,26 @@
                     nbCharleston:   parseInt(document.getElementById('batterie-charleston').value) || 0,
                 }),
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
                     btnSauvegarder.textContent = '✅ Sauvegardé !';
                     setTimeout(() => btnSauvegarder.textContent = 'Sauvegarder la configuration', 2000);
 
-                    // On met à jour le tableau récap batterie
-                    document.getElementById('recap-toms').textContent         = document.getElementById('batterie-toms').value;
-                    document.getElementById('recap-cymbales').textContent     = document.getElementById('batterie-cymbales').value;
+                    // Mise à jour du récap batterie
+                    document.getElementById('recap-toms').textContent          = document.getElementById('batterie-toms').value;
+                    document.getElementById('recap-cymbales').textContent      = document.getElementById('batterie-cymbales').value;
                     document.getElementById('recap-caisse-claire').textContent = document.getElementById('batterie-caisse-claire').value;
                     document.getElementById('recap-grosse-caisse').textContent = document.getElementById('batterie-grosse-caisse').value;
-                    document.getElementById('recap-charleston').textContent   = document.getElementById('batterie-charleston').value;
+                    document.getElementById('recap-charleston').textContent    = document.getElementById('batterie-charleston').value;
+
+                    // Étape 2 — on génère les suggestions de matériel
+                    const sceneId = sceneContainer.dataset.sceneId;
+                    fetch(`/scene/${sceneId}/suggestions`, { method: 'POST' })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success) afficherSuggestions(res.suggestions);
+                    });
                 }
             });
         });

@@ -27,9 +27,14 @@ class AppFixtures extends Fixture
                     ['libelle' => 'Enceinte de retour Yamaha SM12V', 'reference' => 'SON-ENC-003', 'stock_total' => 8, 'stock_dispo' => 8, 'prix' => 50.00],
                 ],
                 'Microphones' => [
-                    ['libelle' => 'Micro Shure SM58', 'reference' => 'SON-MIC-001', 'stock_total' => 10, 'stock_dispo' => 7, 'prix' => 25.00],
-                    ['libelle' => 'Micro Sennheiser e835', 'reference' => 'SON-MIC-002', 'stock_total' => 6, 'stock_dispo' => 6, 'prix' => 20.00],
+                    ['libelle' => 'Micro Shure SM58',        'reference' => 'SON-MIC-001', 'stock_total' => 10, 'stock_dispo' => 7,  'prix' => 25.00],
+                    ['libelle' => 'Micro Sennheiser e835',    'reference' => 'SON-MIC-002', 'stock_total' => 6,  'stock_dispo' => 6,  'prix' => 20.00],
                     ['libelle' => 'Micro HF Sennheiser EW 100', 'reference' => 'SON-MIC-003', 'stock_total' => 4, 'stock_dispo' => 0, 'prix' => 45.00],
+                    ['libelle' => 'Micro Shure SM57',         'reference' => 'SON-MIC-004', 'stock_total' => 8,  'stock_dispo' => 8,  'prix' => 22.00],
+                    ['libelle' => 'Micro Shure Beta 52A',     'reference' => 'SON-MIC-005', 'stock_total' => 4,  'stock_dispo' => 4,  'prix' => 35.00],
+                    ['libelle' => 'Micro Shure SM57 Batterie','reference' => 'SON-MIC-006', 'stock_total' => 6,  'stock_dispo' => 6,  'prix' => 22.00],
+                    ['libelle' => 'Micro Shure SM81',         'reference' => 'SON-MIC-007', 'stock_total' => 4,  'stock_dispo' => 4,  'prix' => 40.00],
+                    ['libelle' => 'Micro Shure Beta 91A',     'reference' => 'SON-MIC-008', 'stock_total' => 4,  'stock_dispo' => 4,  'prix' => 50.00],
                 ],
                 'Tables de mixage' => [
                     ['libelle' => 'Table Yamaha MG16XU', 'reference' => 'SON-MIX-001', 'stock_total' => 3, 'stock_dispo' => 2, 'prix' => 90.00],
@@ -100,9 +105,9 @@ class AppFixtures extends Fixture
         ['libelle' => 'Trompette',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
         ['libelle' => 'Flûte',               'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
         ['libelle' => 'Micro chant',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/micro.png'],
-        ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 80,  'hauteur' => 80,  'url' => '/images/instruments/default.svg'],
+        ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli-guitare.png'],
+        ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli.png'],
+        ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
     ];
 
     foreach ($instrumentsData as $d) {

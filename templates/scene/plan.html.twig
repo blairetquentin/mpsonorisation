@@ -19,11 +19,10 @@
 
     <div class="d-flex gap-4">
 
-        {# ---- Sidebar gauche : musiciens ---- #}
+        {# Sidebar gauche : musiciens #}
         <div style="width: 220px; min-width: 220px;">
             <h2 class="h6 mb-3">Musiciens</h2>
             {% for element in elements %}
-                {# On n'affiche que les vrais instruments, pas les équipements #}
                 {% if element.instrument.type == 'instrument' %}
                 <div
                     class="instrument-item border rounded p-2 mb-2"
@@ -45,7 +44,7 @@
             {% endfor %}
         </div>
 
-        {# ---- Zone centrale : la scène ---- #}
+        {# Zone centrale : la scène #}
         <div
             id="scene-container"
             class="border rounded position-relative bg-light"
@@ -54,7 +53,6 @@
             <div class="scene-label text-muted">Face public</div>
 
             {% for element in elements %}
-                {# On affiche tous les éléments déjà posés (instruments ET équipements) #}
                 {% if element.positionX != 0 or element.positionY != 0 %}
                 <div
                     class="instrument-placed position-absolute"
@@ -78,7 +76,7 @@
 
         </div>
 
-        {# ---- Sidebar droite : équipements ---- #}
+        {# Sidebar droite : équipements #}
         <div style="width: 220px; min-width: 220px;">
             <h2 class="h6 mb-3">Equipements</h2>
             {% for equipement in equipements %}
@@ -103,11 +101,10 @@
         </div>
 
     </div>
-    {# ---- Config batterie — panneau fixe, caché par défaut ---- #}
-    {# Il s'affiche automatiquement quand une batterie est posée sur la scène #}
+
+    {# Config batterie — caché par défaut, affiché par le JS quand une batterie est posée #}
     <div id="panneau-batterie" class="mt-4" style="display: none;">
         <h2 class="h5 mb-3">🥁 Configuration de la batterie</h2>
-
         <div class="row g-3">
             <div class="col-auto">
                 <label class="form-label">Nombre de toms</label>
@@ -130,20 +127,16 @@
                 <input type="number" id="batterie-charleston" class="form-control" min="0" value="0">
             </div>
         </div>
-
-        {# L'id de l'ElementScene de la batterie posée, rempli par le JS #}
         <input type="hidden" id="batterie-element-id" value="">
-
         <button type="button" id="btn-sauvegarder-batterie" class="btn btn-primary mt-3">
             Sauvegarder la configuration
         </button>
     </div>
-    {# ---- SF15 — Récapitulatif des équipements posés ---- #}
-    {# Le tbody est volontairement vide : c'est le JS (mettreAJourRecap) qui le remplit #}
-   {# ---- SF15 — Récap équipements + config batterie côte à côte ---- #}
-    <div class="mt-4 d-flex gap-4">
 
-        {# Tableau récap équipements #}
+    {# Récap équipements + config batterie + suggestions côte à côte #}
+    <div class="mt-4 d-flex gap-4 align-items-start">
+
+        {# Tableau récap équipements — rempli par le JS #}
         <div>
             <h2 class="h5 mb-3">Récapitulatif des équipements</h2>
             <table class="table table-bordered w-auto" id="recap-equipements">
@@ -153,9 +146,7 @@
                         <th>Quantité</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {# Rempli dynamiquement par le JS #}
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
 
@@ -179,7 +170,49 @@
             </table>
         </div>
 
+        {# Tableau matériel suggéré — caché par défaut, rempli dynamiquement par le JS #}
+        <div id="recap-suggestions" style="display: none;">
+            <h2 class="h5 mb-3">🎤 Matériel suggéré</h2>
+            <table class="table table-bordered w-auto">
+                <thead class="table-light">
+                    <tr>
+                        <th>Matériel</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        {# Tableau instruments posés — rempli par le JS #}
+        <div>
+            <h2 class="h5 mb-3"> Instruments</h2>
+            <table class="table table-bordered w-auto" id="recap-instruments">
+                <thead class="table-light">
+                    <tr>
+                        <th>Instrument</th>
+                        <th>Quantité</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
     </div>
+
+    {# Bouton Valider — uniquement si le plan n'est pas encore soumis #}
+    {% if not scene.statut %}
+    <div class="mt-4">
+        <form method="post" action="{{ path('app_scene_submit', {id: scene.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('submit' ~ scene.id) }}">
+            <button type="submit" class="btn btn-success">
+                Valider et soumettre le plan
+            </button>
+        </form>
+    </div>
+    {% else %}
+        <p class="text-success fw-bold mt-4">✅ Plan déjà soumis</p>
+    {% endif %}
 
 </div>
 {% endblock %}

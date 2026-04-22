@@ -40,7 +40,7 @@ class Scene
         return $this->id;
     }
 
-    public function isStatut(): ?bool
+    public function getStatut(): ?bool
     {
         return $this->statut;
     }
