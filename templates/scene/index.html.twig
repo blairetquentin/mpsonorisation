@@ -7,25 +7,19 @@
     <h1 class="mb-4">Ma Scene</h1>
 
     <form method="post">
-        <div id="musiciens">
-            <div class="musicien" data-index="0">
-                <input type="text" name="musicien[0][nom]" class="form-control mb-2" placeholder="Nom du musicien">
-                <div class="instruments">
-                    <input type="text" name="musicien[0][instruments][0][nom]"
-                        class="form-control mb-2" placeholder="Nom de l'instrument">
-                </div>
-                <button type="button" class="add_instrument btn btn-secondary">
-                    + Ajouter instrument
-                </button>
-            </div>
-        </div>
-        <button type="button" id="add_musicien" class="btn btn-secondary mt-2">
-            + Ajouter musicien
-        </button>
-        <button type="submit" class="btn btn-primary mt-2">
-            Enregistrer
-        </button>
-    </form>
+    <input type="text" name="nom_artiste" class="form-control mb-2" placeholder="Nom artiste / groupe">
 
+    <div id="instruments">
+        <input type="text" name="instruments[0]" class="form-control mb-2" placeholder="Instrument">
+    </div>
+
+    <button type="button" id="add_instrument" class="btn btn-secondary mt-2">
+        + Ajouter instrument
+    </button>
+
+    <button type="submit" class="btn btn-primary mt-2">
+        Enregistrer
+    </button>
+</form>
 </div>
 {% endblock %}
