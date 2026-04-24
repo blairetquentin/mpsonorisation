@@ -41,7 +41,7 @@ class PanierController extends AbstractController
     }
 
     #[Route('/panier/add/{id}', name: 'app_panier_add', requirements: ['id'=>'\d+'])]
-    public function add(int $id, MaterielRepository $materielRepo, PanierRepository $panierRepo, EntityManagerInterface $em): Response
+    public function add(int $id, Request $request, MaterielRepository $materielRepo, PanierRepository $panierRepo, EntityManagerInterface $em): Response
     {
         if(!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -51,6 +51,7 @@ class PanierController extends AbstractController
         if (!$materiel){
             throw $this->createNotFoundException('Materiel non trouvé');
         }
+        $quantite = $request->request->getInt('quantite', 1);
         
         $panier = $panierRepo->findOneBy(['user' => $this->getUser()]);
 
@@ -70,14 +71,16 @@ class PanierController extends AbstractController
                     $panierMateriel = $pm;
                     break;
                 }
-            }
+
+            
+;            }
             if ($panierMateriel) {
                 $panierMateriel->setQuantite($panierMateriel->getQuantite() + 1);
             }else{
                 $panierMateriel = new PanierMateriel();
                 $panierMateriel->setPanier($panier);
                 $panierMateriel->setMateriel($materiel);
-                $panierMateriel->setQuantite(1);
+                $panierMateriel->setQuantite($quantite);
                 $em->persist($panierMateriel);
             }
 
@@ -149,47 +152,47 @@ class PanierController extends AbstractController
    #[Route('/panier/envoyer-devis', name:'app_envoyer_devis')]
     public function envoyerDevis(PanierRepository $panierRepo, MailerInterface $mailer, EntityManagerInterface $em): Response
     {
-    /** @var User $user */
-    $user = $this->getUser();
-    $panier = $panierRepo->findOneBy(['user' => $user]);
+        /** @var User $user */
+        $user = $this->getUser();
+        $panier = $panierRepo->findOneBy(['user' => $user]);
 
-    if (!$panier || $panier->getPanierMateriel()->isEmpty()) {
-        $this->addFlash('warning', 'Votre panier est vide.');
+        if (!$panier || $panier->getPanierMateriel()->isEmpty()) {
+            $this->addFlash('warning', 'Votre panier est vide.');
+            return $this->redirectToRoute('app_panier');
+        }
+        $devis = new Devis();
+            $devis->setDateDemande(new \DateTime());
+            $devis->setStatut('en_attente');
+            $devis->setPanier($panier);
+            $em->persist($devis);
+            $em->flush();
+
+        $emailAdmin = (new Email())
+            ->from('blairet.quentin@gmail.com')
+            ->replyTo($user->getEmail())
+            ->to('blairet.quentin@gmail.com')
+            ->subject('Nouvelle demande de devis — ' . $user->getPrenom() . ' ' . $user->getNom())
+            ->html($this->renderView('devis/index.html.twig', [
+                'user' => $user,
+                'panier' => $panier,
+                'devis' => $devis,
+            ]));
+
+        $emailClient = (new Email())
+            ->from('blairet.quentin@gmail.com')
+            ->to($user->getEmail())
+            ->subject('Confirmation de votre demande de devis — MpSonorisation')
+            ->html($this->renderView('devis/client.html.twig', [
+                'user' => $user,
+                'panier' => $panier,
+            ]));
+    
+            
+        $mailer->send($emailAdmin);
+        $mailer->send($emailClient);
+
+        $this->addFlash('success', 'Votre demande de devis a bien été envoyée !');
+
         return $this->redirectToRoute('app_panier');
-    }
-     $devis = new Devis();
-        $devis->setDateDemande(new \DateTime());
-        $devis->setStatut('en_attente');
-        $devis->setPanier($panier);
-        $em->persist($devis);
-        $em->flush();
-
-    $emailAdmin = (new Email())
-        ->from('blairet.quentin@gmail.com')
-        ->replyTo($user->getEmail())
-        ->to('blairet.quentin@gmail.com')
-        ->subject('Nouvelle demande de devis — ' . $user->getPrenom() . ' ' . $user->getNom())
-        ->html($this->renderView('devis/index.html.twig', [
-            'user' => $user,
-            'panier' => $panier,
-            'devis' => $devis,
-        ]));
-
-    $emailClient = (new Email())
-        ->from('blairet.quentin@gmail.com')
-        ->to($user->getEmail())
-        ->subject('Confirmation de votre demande de devis — MpSonorisation')
-        ->html($this->renderView('devis/client.html.twig', [
-            'user' => $user,
-            'panier' => $panier,
-        ]));
-   
-        
-    $mailer->send($emailAdmin);
-    $mailer->send($emailClient);
-
-    $this->addFlash('success', 'Votre demande de devis a bien été envoyée !');
-
-    return $this->redirectToRoute('app_panier');
     }
 }

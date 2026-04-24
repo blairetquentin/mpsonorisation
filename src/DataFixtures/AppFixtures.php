@@ -124,7 +124,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setNom('Admin');
         $admin->setPrenom('Super');
-        $admin->setEmail('admin@mpsonorisation.fr');
+        $admin->setEmail('blairet.quentin@gmail.com');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setDateNaissance(new \DateTime('1990-01-01'));
         $admin->setPassword($this->hasher->hashPassword($admin, 'admin1234'));
@@ -133,7 +133,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setNom('Dupont');
         $user->setPrenom('Jean');
-        $user->setEmail('jean@mpsonorisation.fr');
+        $user->setEmail('blairet.quentin2@gmail.com');
         $user->setRoles(['ROLE_USER']);
         $user->setDateNaissance(new \DateTime('1995-06-15'));
         $user->setPassword($this->hasher->hashPassword($user, 'user1234'));
