@@ -31,11 +31,6 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ materiel.libelle }}</h5>
                                 <p class="card-text text-muted small">Réf. {{ materiel.reference }}</p>
-                                {% if materiel.stockDispo > 0 %}
-                                    <span class="badge bg-success">Disponible ({{ materiel.stockDispo }})</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Indisponible</span>
-                                {% endif %}
                             </div>
 
                             <div class="card-footer bg-transparent">
@@ -43,7 +38,23 @@
                                    class="btn btn-outline-primary btn-sm w-100">
                                     Voir la fiche
                                 </a>
-                            </div>
+                                {% if app.user %}
+                                    <form action="{{ path ('app_panier_add', {id: materiel.id}) }}" method="post">
+                                        <div class="mb-3">
+                                            <label for="quantite" class="form-label">Quantité :</label>
+                                            <input type="number" id="quantite" name="quantite" class="form-control w-25" value="1" min="1">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            Ajouter au panier
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <a href="{{ path('app_login') }}"
+                                    class="btn btn-outline-primary btn-lg w-100">
+                                        Se connecter pour ajouter au panier
+                                    </a>
+                                {% endif %}
+                                </div>
                         </div>
                     </div>
                 {% endfor %}

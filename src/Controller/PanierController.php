@@ -10,6 +10,7 @@ use App\Repository\MaterielRepository;
 use App\Repository\PanierRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -86,7 +87,11 @@ class PanierController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('app_catalogue_detail', ['id' => $materiel->getId()]);
+            $referer = $request->headers->get('referer');
+            if ($referer) {
+                return new RedirectResponse($referer);
+            }
+            return $this->redirectToRoute('app_catalogue');
         }
 
     #[Route('/panier/increase/{id}', name: 'app_panier_increase', requirements: ['id'=>'\d+'])]
