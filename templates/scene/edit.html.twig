@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}creation scene{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Creation Scene</h1>
+
+ {{ form_start(form) }}
+    {{ form_row(form.nomEvenement) }}
+    {{ form_row(form.dateEvenement) }}
+    {{ form_row(form.nomArtiste) }}
+
+    <div id="instruments">
+        <select name="instruments-select" id="select-instruments">
+            {% for instrument in instruments %}
+                <option value="{{instrument.id}}">{{instrument.libelle}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="button" id="add_instrument" class="btn btn-secondary mt-2 ms-5 d-block">
+        + Ajouter instrument
+    </button>
+    <button type="submit" class="btn btn-primary mt-3 d-block">
+        Enregistrer
+    </button>
+{{ form_end(form) }}
+</div>
+{% endblock %}

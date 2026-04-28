@@ -20,3 +20,9 @@ body {
     transform: scale(1.03);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
 }
+.supprimer-instrument {
+    color: red;
+    background: none;
+    border: none;
+    padding-top: 0px !important;
+}

@@ -1,25 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}scene{% endblock %}
+{% block title %}mes scene{% endblock %}
 
 {% block body %}
 <div class="container py-5">
-    <h1 class="mb-4">Ma Scene</h1>
-
-    <form method="post">
-    <input type="text" name="nom_artiste" class="form-control mb-2" placeholder="Nom artiste / groupe">
-
-    <div id="instruments">
-        <input type="text" name="instruments[0]" class="form-control mb-2" placeholder="Instrument">
+    <h1 class="mb-4">Mes Scenes</h1>
+    <div>
+        {% for scene in scenes %}
+            <a href="{{ path('app_scene_form', {id: scene.id}) }}">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <p class="card-text">{{ scene.nomEvenement }}</p>
+                        <p class="card-text">{{ scene.dateEvenement|date('d/m/Y') }}</p>
+                        <p class="card-text">{{ scene.nomArtiste }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </a>
     </div>
-
-    <button type="button" id="add_instrument" class="btn btn-secondary mt-2">
-        + Ajouter instrument
-    </button>
-
-    <button type="submit" class="btn btn-primary mt-2">
-        Enregistrer
-    </button>
-</form>
-</div>
 {% endblock %}

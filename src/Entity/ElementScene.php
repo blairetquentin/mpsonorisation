@@ -18,12 +18,6 @@ class ElementScene
     #[ORM\Column]
     private ?int $quantite = null;
 
-    #[ORM\Column]
-    private ?float $position_x = null;
-
-    #[ORM\Column]
-    private ?float $position_y = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Scene $scene = null;
@@ -59,30 +53,6 @@ class ElementScene
     public function setQuantite(int $quantite): static
     {
         $this->quantite = $quantite;
-
-        return $this;
-    }
-
-    public function getPositionX(): ?float
-    {
-        return $this->position_x;
-    }
-
-    public function setPositionX(float $position_x): static
-    {
-        $this->position_x = $position_x;
-
-        return $this;
-    }
-
-    public function getPositionY(): ?float
-    {
-        return $this->position_y;
-    }
-
-    public function setPositionY(float $position_y): static
-    {
-        $this->position_y = $position_y;
 
         return $this;
     }
@@ -144,7 +114,6 @@ class ElementScene
     public function removeConfigBattery(ConfigBatterie $configBattery): static
     {
         if ($this->configBatteries->removeElement($configBattery)) {
-            // set the owning side to null (unless already changed)
             if ($configBattery->getElementScene() === $this) {
                 $configBattery->setElementScene(null);
             }
