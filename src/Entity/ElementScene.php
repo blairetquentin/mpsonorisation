@@ -15,7 +15,7 @@ class ElementScene
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable:true)]
     private ?int $quantite = null;
 
     #[ORM\ManyToOne]
@@ -28,6 +28,10 @@ class ElementScene
 
     #[ORM\Column(length: 100)]
     private ?string $nom_musicien = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Instruments $equipement = null;
 
     /**
      * @var Collection<int, ConfigBatterie>
@@ -91,8 +95,17 @@ class ElementScene
         $this->nom_musicien = $nom_musicien;
 
         return $this;
-}
+    }
+        public function getEquipement(): ?Instruments
+    {
+        return $this->equipement;
+    }
 
+    public function setEquipement(?Instruments $equipement): static
+    {
+    $this->equipement = $equipement;
+    return $this;
+    }
     /**
      * @return Collection<int, ConfigBatterie>
      */

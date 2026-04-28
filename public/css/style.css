@@ -26,3 +26,6 @@ body {
     border: none;
     padding-top: 0px !important;
 }
+.tableau-musicien {
+    border: 2px solid black;
+}
