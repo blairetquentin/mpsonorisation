@@ -7,7 +7,7 @@
     <h1 class="mb-4">Mes Scenes</h1>
     <div>
         {% for scene in scenes %}
-            <a href="{{ path('app_scene_form', {id: scene.id}) }}">
+            <a href="{{ path('app_scene_modif', {id: scene.id}) }}">
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <p class="card-text">{{ scene.nomEvenement }}</p>

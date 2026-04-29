@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifer scene{% endblock %}
+
+{% block body %}
+    {% include 'scene/navbarsecondaire.html.twig' %}
+<div class="container py-5">
+    <h1 class="mb-4">Modifier Scene</h1>
+
+{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+    {{ form_row(form.nomEvenement) }}
+    {{ form_row(form.dateEvenement) }}
+    {{ form_row(form.nomArtiste) }}
+
+    <div id="instruments">
+        <h2>Ajouter un nouvel instrument :</h2>
+        <select name="instruments[0]">
+            <option value="">-- Aucun --</option>
+            {% for instrument in instruments %}
+                <option value="{{ instrument.id }}">{{ instrument.libelle }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
+    </div>
+
+    <button type="button" id="add_instrument" class="btn btn-secondary mt-2 d-block">
+        + Ajouter instrument
+    </button>
+
+    <button type="submit" name="action" value="ajouter" class="btn btn-primary mt-2">
+        Sauvegarder les modifications
+    </button>
+
+    <h3 class="mt-4">Recap de vos instruments :</h3>
+    <table class="tableau-musicien table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Nom du musicien</th>
+                <th scope="col">Nom de l'instrument</th>
+                <th scope="col">Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if scene.id %}
+            {% for element in scene.elementScenes %}
+            <tr>
+                <td>{{ element.nomMusicien }}</td>
+                <td>{{ element.instrument.libelle }}</td>
+                <td>
+                    <form method="POST" action="{{ path('app_scene_delete', { id: element.id }) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_element_' ~ element.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">✕</button>
+                    </form>
+                    
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+{{ form_end(form) }}
+
+</div>
+{% endblock %}

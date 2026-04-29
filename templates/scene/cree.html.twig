@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}creation scene{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Creation Scene</h1>
+
+{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+    {{ form_row(form.nomEvenement) }}
+    {{ form_row(form.dateEvenement) }}
+    {{ form_row(form.nomArtiste) }}
+
+    <div id="instruments">
+        <h2>Ajouter un nouvel instrument :</h2>
+        <select name="instruments[0]">
+            <option value="">-- Aucun --</option>
+            {% for instrument in instruments %}
+                <option value="{{ instrument.id }}">{{ instrument.libelle }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
+    </div>
+
+    <button type="button" id="add_instrument" class="btn btn-secondary mt-2 d-block">
+        + Ajouter instrument
+    </button>
+    <button type="submit" name="action" value="ajouter" class="btn btn-primary mt-2">
+        Valider la scene
+    </button>
+{{ form_end(form) }}
+
+</div>
+{% endblock %}

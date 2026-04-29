@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ma scene{% endblock %}
+
+{% block body %}
+    {% include 'scene/navbarsecondaire.html.twig' %}
+
+    <div style="display: flex; gap: 40px; align-items: flex-start;">
+
+   
+        <table class="tableau-musicien table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">Nom du musicien</th>
+                    <th scope="col">Nom de l'instrument</th>
+                    <th scope="col">Équipement</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if scene.id %}
+                {% for element in scene.elementScenes %}
+                <tr>
+                    <td>{{ element.nomMusicien }}</td>
+                    <td>{{ element.instrument.libelle }}</td>
+                    <td>
+                        {% if element.instrument.libelle == 'Batterie' %}
+                            <a href="{{ path('app_scene_batterie', {id: element.id}) }}" class="btn btn-sm btn-warning">
+                                Config batterie
+                            </a>
+                        {% else %}
+                            {% if element.equipement %}
+                                {{ element.equipement.libelle }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+
+        {% if scene.id %}
+            {% for element in scene.elementScenes %}
+                {% if element.instrument.libelle == 'Batterie' %}
+                    {% set config = element.configBatteries|first %}
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Config batterie — {{ element.nomMusicien }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Toms</td>
+                                <td>{{ config ? config.nbToms : '--' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Cymbales</td>
+                                <td>{{ config ? config.nbCymbales : '--' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Grosse caisse</td>
+                                <td>{{ config ? config.nbGrosseCaisse : '--' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Caisse claire</td>
+                                <td>{{ config ? config.nbCaisseClaire : '--' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Charleston</td>
+                                <td>{{ config ? config.nbCharleston : '--' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+{% endblock %}

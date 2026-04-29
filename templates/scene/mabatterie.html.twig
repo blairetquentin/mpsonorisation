@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ma batterie{% endblock %}
+
+{% block body %}
+    {% include 'scene/navbarsecondaire.html.twig' %}
+<form method="POST" action="{{ path('app_scene_batterie', {id: batterie.id}) }}">
+    <table class="tableau-musicien table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Nombres de toms</th>
+                <th scope="col">Nombres de Cymbales</th>
+                <th scope="col">Nombres de grosse caisse</th>
+                <th scope="col">Nombres de caisse claire</th>
+                <th scope="col">Nombres de charleston</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if batterie.id %}
+           
+            <tr>
+                <td><input type="number" name="NbToms" value="{{ configbatterie ? configbatterie.nbToms : '' }}"></td>
+                <td><input type="number" name="NbCymbales" value="{{ configbatterie ? configbatterie.nbCymbales : '' }}"></td>
+                <td><input type="number" name="NbCaisseClaire" value="{{ configbatterie ? configbatterie.nbCaisseClaire: '' }}"></td>
+                <td><input type="number" name="NbGrosseCaisse" value="{{ configbatterie ? configbatterie.nbGrosseCaisse: '' }}"></td>
+                <td><input type="number" name="NbCharleston" value="{{ configbatterie ? configbatterie.nbCharleston : '' }}"></td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success mt-2">
+        Sauvegarder les équipements
+    </button>
+</form>
+{% endblock %}

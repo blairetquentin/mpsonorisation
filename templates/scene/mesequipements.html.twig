@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}mes equipements{% endblock %}
+
+{% block body %}
+    {% include 'scene/navbarsecondaire.html.twig' %}
+<form method="POST" action="{{ path('app_scene_mesequipements', {id: scene.id}) }}">
+    <table class="tableau-musicien table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Nom du musicien</th>
+                <th scope="col">Nom de l'instrument</th>
+                <th scope="col">Équipement</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if scene.id %}
+            {% for element in scene.elementScenes %}
+            <tr>
+                <td>{{ element.nomMusicien }}</td>
+                <td>{{ element.instrument.libelle }}</td>
+                <td>
+                    <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
+                        <option value="">-- Aucun --</option>
+                        {% for equipement in equipements %}
+                            <option value="{{ equipement.id }}"
+                                {% if element.equipement and element.equipement.id == equipement.id %}
+                                    selected
+                                {% endif %}>
+                                {{ equipement.libelle }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+    <button type="submit" name="action" value="equipement" class="btn btn-success mt-2">
+        Sauvegarder les équipements
+    </button>
+
+</form>
+    {% endblock %}
