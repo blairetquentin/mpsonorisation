@@ -20,15 +20,3 @@ document.getElementById('instruments').addEventListener('click', function(e) {
         e.target.closest('div').remove();
     }
 });
-document.querySelectorAll('select[name^="equipement"]').forEach(function(select) {
-    select.addEventListener('change', function() {
-        var elementId = this.name.replace('equipement[', '').replace(']', '');
-        var configDiv = document.getElementById('config-batterie-' + elementId);
-
-        if (this.options[this.selectedIndex].text === 'Batterie') {
-            configDiv.style.display = 'block';
-        } else {
-            configDiv.style.display = 'none';
-        }
-    });
-});

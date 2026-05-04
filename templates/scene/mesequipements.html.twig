@@ -16,23 +16,25 @@
         <tbody>
         {% if scene.id %}
             {% for element in scene.elementScenes %}
-            <tr>
-                <td>{{ element.nomMusicien }}</td>
-                <td>{{ element.instrument.libelle }}</td>
-                <td>
-                    <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
-                        <option value="">-- Aucun --</option>
-                        {% for equipement in equipements %}
-                            <option value="{{ equipement.id }}"
-                                {% if element.equipement and element.equipement.id == equipement.id %}
-                                    selected
-                                {% endif %}>
-                                {{ equipement.libelle }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </td>
-            </tr>
+                {% if element.instrument.libelle != "Batterie" %}
+                <tr>
+                    <td>{{ element.nomMusicien }}</td>
+                    <td>{{ element.instrument.libelle }}</td>
+                    <td>
+                        <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
+                            <option value="">-- Aucun --</option>
+                            {% for equipement in equipements %}
+                                <option value="{{ equipement.id }}"
+                                    {% if element.equipement and element.equipement.id == equipement.id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ equipement.libelle }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
         {% endif %}
         </tbody>

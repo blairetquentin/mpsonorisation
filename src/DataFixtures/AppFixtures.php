@@ -15,7 +15,8 @@ class AppFixtures extends Fixture
 {
     public function __construct(
         private UserPasswordHasherInterface $hasher
-    ) {}
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -94,31 +95,29 @@ class AppFixtures extends Fixture
         }
 
         // ---- INSTRUMENTS ----
-    $instrumentsData = [
-        ['libelle' => 'Guitare électrique', 'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-electrique.png'],
-        ['libelle' => 'Guitare basse',       'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-basse.png'],
-        ['libelle' => 'Guitare acoustique',  'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Batterie',            'type' => 'instrument', 'largeur' => 200, 'hauteur' => 150, 'url' => '/images/instruments/tambour.png'],
-        ['libelle' => 'Clavier / Piano',     'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/musique.png'],
-        ['libelle' => 'Violon',              'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Saxophone',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Trompette',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Flûte',               'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
-        ['libelle' => 'Micro chant',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/micro.png'],
-        ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli-guitare.png'],
-        ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli.png'],
-        ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
-    ];
+        $instrumentsData = [
+            ['libelle' => 'Guitare électrique', 'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-electrique.png'],
+            ['libelle' => 'Guitare basse',       'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-basse.png'],
+            ['libelle' => 'Guitare acoustique',  'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+            ['libelle' => 'Batterie',            'type' => 'instrument', 'largeur' => 200, 'hauteur' => 150, 'url' => '/images/instruments/tambour.png'],
+            ['libelle' => 'Clavier / Piano',     'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/musique.png'],
+            ['libelle' => 'Violon',              'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+            ['libelle' => 'Saxophone',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+            ['libelle' => 'Trompette',           'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+            ['libelle' => 'Flûte',               'type' => 'instrument', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/default.svg'],
+            ['libelle' => 'Micro chant',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/micro.png'],
+            ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli-guitare.png'],
+            ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli.png'],
+            ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+        ];
 
-    foreach ($instrumentsData as $d) {
-        $instrument = new Instruments();
-        $instrument->setLibelle($d['libelle']);
-        $instrument->setType($d['type']);
-        $instrument->setLargeur($d['largeur']);
-        $instrument->setHauteur($d['hauteur']);
-        $instrument->setUrlInstrument($d['url']);
-        $manager->persist($instrument);
-    }
+        foreach ($instrumentsData as $d) {
+            $instrument = new Instruments();
+            $instrument->setLibelle($d['libelle']);
+            $instrument->setType($d['type']);
+            $instrument->setUrlInstrument($d['url']);
+            $manager->persist($instrument);
+        }
 
         // ---- UTILISATEURS ----
         $admin = new User();
