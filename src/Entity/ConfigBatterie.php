@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ConfigBatterieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConfigBatterieRepository::class)]
@@ -28,8 +30,20 @@ class ConfigBatterie
     #[ORM\Column(nullable: true)]
     private ?int $nbCharleston = null;
 
-    #[ORM\ManyToOne(inversedBy: 'configBatteries')]
+    #[ORM\OneToOne(inversedBy: 'configBatterie')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ElementScene $elementScene = null;
+
+    /**
+     * @var Collection<int, MaterielSuggere>
+     */
+    #[ORM\OneToMany(targetEntity: MaterielSuggere::class, mappedBy: 'configBatterie')]
+    private Collection $materielSuggeres;
+
+    public function __construct()
+    {
+        $this->materielSuggeres = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -100,5 +114,11 @@ class ConfigBatterie
     {
         $this->elementScene = $elementScene;
         return $this;
+    }
+
+    
+    public function __toString(): string
+    {
+        return 'Batterie - ' . $this->elementScene->getScene()->getNomArtiste();
     }
 }

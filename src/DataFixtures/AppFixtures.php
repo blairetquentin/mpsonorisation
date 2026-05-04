@@ -6,6 +6,7 @@ use App\Entity\Categorie;
 use App\Entity\SousCategorie;
 use App\Entity\Materiel;
 use App\Entity\Instruments;
+use App\Entity\MaterielSuggere;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -90,11 +91,12 @@ class AppFixtures extends Fixture
                     $materiel->setUrlMateriel(null);
                     $materiel->setSousCategorie($sousCategorie);
                     $manager->persist($materiel);
+
+                    $this->addReference('materiel-' . $m['libelle'], $materiel);
                 }
             }
         }
 
-        // ---- INSTRUMENTS ----
         $instrumentsData = [
             ['libelle' => 'Guitare électrique', 'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-electrique.png'],
             ['libelle' => 'Guitare basse',       'type' => 'instrument', 'largeur' => 75,  'hauteur' => 75,  'url' => '/images/instruments/guitare-basse.png'],
@@ -117,9 +119,28 @@ class AppFixtures extends Fixture
             $instrument->setType($d['type']);
             $instrument->setUrlInstrument($d['url']);
             $manager->persist($instrument);
+
+            $this->addReference('instrument-' . $d['libelle'], $instrument);
         }
 
-        // ---- UTILISATEURS ----
+        $materielSuggereData = [
+        ['instrument' => 'Ampli guitare', 'materiel' => 'Micro Shure SM57', 'quantite' => 1],
+        ['instrument' => 'Ampli basse',   'materiel' => 'Micro Shure Beta 52A', 'quantite' => 1],
+        ];
+
+        foreach ($materielSuggereData as $ms) {
+        $instrument = $this->getReference('instrument-' . $ms['instrument'], Instruments::class);
+        $materielObj = $this->getReference('materiel-' . $ms['materiel'], Materiel::class);
+        
+        $materielSuggere = new MaterielSuggere();
+        $materielSuggere->setInstrument($instrument);
+        $materielSuggere->setMateriel($materielObj);
+        $materielSuggere->setQuantite($ms['quantite']);
+        $manager->persist($materielSuggere);
+        };
+
+
+
         $admin = new User();
         $admin->setNom('Admin');
         $admin->setPrenom('Super');

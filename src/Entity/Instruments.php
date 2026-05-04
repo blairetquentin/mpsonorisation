@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\InstrumentsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InstrumentsRepository::class)]
@@ -21,6 +23,17 @@ class Instruments
 
     #[ORM\Column(length: 255)]
     private ?string $url_instrument = null;
+
+    /**
+     * @var Collection<int, MaterielSuggere>
+     */
+    #[ORM\OneToMany(targetEntity: MaterielSuggere::class, mappedBy: 'instrument')]
+    private Collection $materielSuggeres;
+
+    public function __construct()
+    {
+        $this->materielSuggeres = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -61,5 +74,39 @@ class Instruments
         $this->type = $type;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, MaterielSuggere>
+     */
+    public function getMaterielSuggeres(): Collection
+    {
+        return $this->materielSuggeres;
+    }
+
+    public function addMaterielSuggere(MaterielSuggere $materielSuggere): static
+    {
+        if (!$this->materielSuggeres->contains($materielSuggere)) {
+            $this->materielSuggeres->add($materielSuggere);
+            $materielSuggere->setInstrument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMaterielSuggere(MaterielSuggere $materielSuggere): static
+    {
+        if ($this->materielSuggeres->removeElement($materielSuggere)) {
+            // set the owning side to null (unless already changed)
+            if ($materielSuggere->getInstrument() === $this) {
+                $materielSuggere->setInstrument(null);
+            }
+        }
+
+        return $this;
+    }
+    public function __toString(): string
+    {
+        return $this->libelle;
     }
 }

@@ -7,7 +7,6 @@
 
     <div style="display: flex; gap: 40px; align-items: flex-start;">
 
-   
         <table class="tableau-musicien table-bordered mt-3">
             <thead>
                 <tr>
@@ -44,7 +43,6 @@
         {% if scene.id %}
             {% for element in scene.elementScenes %}
                 {% if element.instrument.libelle == 'Batterie' %}
-                    {% set config = element.configBatteries|first %}
                     <table class="table table-bordered mt-3">
                         <thead>
                             <tr>
@@ -54,23 +52,23 @@
                         <tbody>
                             <tr>
                                 <td>Toms</td>
-                                <td>{{ config ? config.nbToms : '--' }}</td>
+                                <td>{{ element.configBatterie ? element.configBatterie.nbToms : '--' }}</td>
                             </tr>
                             <tr>
                                 <td>Cymbales</td>
-                                <td>{{ config ? config.nbCymbales : '--' }}</td>
+                                <td>{{ element.configBatterie ? element.configBatterie.nbCymbales : '--' }}</td>
                             </tr>
                             <tr>
                                 <td>Grosse caisse</td>
-                                <td>{{ config ? config.nbGrosseCaisse : '--' }}</td>
+                                <td>{{ element.configBatterie ? element.configBatterie.nbGrosseCaisse : '--' }}</td>
                             </tr>
                             <tr>
                                 <td>Caisse claire</td>
-                                <td>{{ config ? config.nbCaisseClaire : '--' }}</td>
+                                <td>{{ element.configBatterie ? element.configBatterie.nbCaisseClaire : '--' }}</td>
                             </tr>
                             <tr>
                                 <td>Charleston</td>
-                                <td>{{ config ? config.nbCharleston : '--' }}</td>
+                                <td>{{ element.configBatterie ? element.configBatterie.nbCharleston : '--' }}</td>
                             </tr>
                         </tbody>
                     </table>

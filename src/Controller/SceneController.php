@@ -3,12 +3,13 @@ namespace App\Controller;
 
 use App\Entity\ConfigBatterie;
 use App\Entity\ElementScene;
-use App\Entity\Instruments;
+use App\Entity\MaterielSuggere;
 use App\Entity\Scene;
 use App\Form\EvenementsceneType;
 use App\Repository\ConfigBatterieRepository;
 use App\Repository\ElementSceneRepository;
 use App\Repository\InstrumentsRepository;
+use App\Repository\MaterielSuggereRepository;
 use App\Repository\SceneRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,14 +23,16 @@ class SceneController extends AbstractController
     public function index(SceneRepository $sceneRepository) : Response
     {
         $scenes = $sceneRepository->findAll();
+       
 
         return $this->render('scene/index.html.twig', [
             'scenes' => $scenes,
+            
         ]);
     }
 
     #[Route('/scene/mascene/{id}', name:'app_scene_mascene')]
-    public function mascene(int $id, SceneRepository $sceneRepository) : Response
+    public function mascene(int $id, SceneRepository $sceneRepository,  ConfigBatterieRepository $configBatterieRepository) : Response
     {
         $scene= $sceneRepository->find($id);
         return $this->render('scene/mascene.html.twig', [
@@ -184,5 +187,28 @@ class SceneController extends AbstractController
 
         return $this->redirectToRoute('app_scene_modif', ['id' => $sceneId]);
     }
-        
+
+    #[Route('scene/materielsuggere/{id}' , name:'app_scene_materielsuggere', )]
+    public function materielconseille(int $id, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
+    {
+        $scene = $sceneRepository->find($id);
+
+        if($request->isMethod('POST')) {
+            $materielsChoisis = $request->request->all('equipement');
+            foreach($materielsChoisis as $elementSceneId => $materielSuggereId) {
+                $elementScene = $elementSceneRepository->find($elementSceneId);
+                if (!$elementScene) {
+                    continue;
+                }
+                $materielSuggere = $materielSuggereRepository->find($materielSuggereId);
+                $elementScene->setMaterielSuggere($materielSuggere);
+                $emi->persist($elementScene);
+            }
+            $emi->flush();
+        }
+    
+        return $this->render('scene/materielsuggere.html.twig', [
+                'scene' => $scene,
+        ]);
+    }   
     }

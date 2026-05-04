@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}materiel suggere{% endblock %}
+
+{% block body %}
+    {% include 'scene/navbarsecondaire.html.twig' %}
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+    <form method="POST" action="{{ path('app_scene_materielsuggere', {id: scene.id}) }}">
+        <table class="maetriel-suggere table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">Instruments</th>
+                    <th scope="col">Équipements</th>
+                    <th scope="col">Matériel conseillé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for element in scene.elementScenes %}
+                    {% if element.equipement %}
+                        <tr>
+                            <td>{{ element.instrument.libelle }}</td>
+                            <td>{{ element.equipement.libelle }}</td>
+                            <td>
+                                <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
+                                    <option value="">-- Aucun --</option>
+                                    {% for materielSuggere in element.equipement.materielSuggeres %}
+                                        <option value="{{ materielSuggere.id }}"
+                                            {% if element.materielSuggere and element.materielSuggere.id == materielSuggere.id %}
+                                                selected
+                                            {% endif %}>
+                                            {{ materielSuggere.materiel.libelle }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-success mt-2">
+            Sauvegarder les équipements
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -31,5 +31,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(CategorieCrudController::class, 'Catégories', 'fas fa-folder');
         yield MenuItem::linkTo(SousCategorieCrudController::class, 'Sous-catégories', 'fas fa-folder-open');
         yield MenuItem::linkTo(DevisCrudController::class, 'Devis', 'fa fa-file');
+        yield MenuItem::linkTo(MaterielSuggereCrudController::class, 'Materiel Suggere', 'fas fa-box');
     }
-}
+    }
+

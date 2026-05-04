@@ -32,17 +32,12 @@ class ElementScene
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true)]
     private ?Instruments $equipement = null;
+  
+    #[ORM\OneToOne(targetEntity: ConfigBatterie::class, mappedBy: 'elementScene')]
+    private ?ConfigBatterie $configBatterie = null;
 
-    /**
-     * @var Collection<int, ConfigBatterie>
-     */
-    #[ORM\OneToMany(targetEntity: ConfigBatterie::class, mappedBy: 'elementScene')]
-    private Collection $configBatteries;
-
-    public function __construct()
-    {
-        $this->configBatteries = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'elementScenes')]
+    private ?MaterielSuggere $materielSuggere = null;
 
     public function getId(): ?int
     {
@@ -106,31 +101,26 @@ class ElementScene
     $this->equipement = $equipement;
     return $this;
     }
-    /**
-     * @return Collection<int, ConfigBatterie>
-     */
-    public function getConfigBatteries(): Collection
+
+    public function getConfigBatterie(): ?ConfigBatterie
     {
-        return $this->configBatteries;
+        return $this->configBatterie;
     }
 
-    public function addConfigBattery(ConfigBatterie $configBattery): static
+    public function setConfigBatterie(?ConfigBatterie $configBatterie): static
     {
-        if (!$this->configBatteries->contains($configBattery)) {
-            $this->configBatteries->add($configBattery);
-            $configBattery->setElementScene($this);
-        }
-
+        $this->configBatterie = $configBatterie;
         return $this;
     }
 
-    public function removeConfigBattery(ConfigBatterie $configBattery): static
+    public function getMaterielSuggere(): ?MaterielSuggere
     {
-        if ($this->configBatteries->removeElement($configBattery)) {
-            if ($configBattery->getElementScene() === $this) {
-                $configBattery->setElementScene(null);
-            }
-        }
+        return $this->materielSuggere;
+    }
+
+    public function setMaterielSuggere(?MaterielSuggere $materielSuggere): static
+    {
+        $this->materielSuggere = $materielSuggere;
 
         return $this;
     }
