@@ -188,13 +188,16 @@ class SceneController extends AbstractController
         return $this->redirectToRoute('app_scene_modif', ['id' => $sceneId]);
     }
 
-    #[Route('scene/materielsuggere/{id}' , name:'app_scene_materielsuggere', )]
-    public function materielconseille(int $id, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
+    #[Route('scene/materielsuggere/{id}', name:'app_scene_materielsuggere')]
+    public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, ConfigBatterieRepository $configBatterieRepository, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
     {
         $scene = $sceneRepository->find($id);
+        $equipementsBatterie = $instrumentsRepository->findBy(['type' => 'equipement_batterie']);
 
         if($request->isMethod('POST')) {
             $materielsChoisis = $request->request->all('equipement');
+            $batterieChoisis = $request->request->all('batterie');
+
             foreach($materielsChoisis as $elementSceneId => $materielSuggereId) {
                 $elementScene = $elementSceneRepository->find($elementSceneId);
                 if (!$elementScene) {
@@ -204,11 +207,30 @@ class SceneController extends AbstractController
                 $elementScene->setMaterielSuggere($materielSuggere);
                 $emi->persist($elementScene);
             }
+
+            $configBatterie = null;
+            foreach($scene->getElementScenes() as $element) {
+                if($element->getConfigBatterie()) {
+                    $configBatterie = $element->getConfigBatterie();
+                    break;
+                }
+            }
+
+            if($configBatterie && $batterieChoisis) {
+                $configBatterie->setMicroTom($materielSuggereRepository->find($batterieChoisis['tom'][1] ?? null));
+                $configBatterie->setMicroCymbale($materielSuggereRepository->find($batterieChoisis['cymbale'][1] ?? null));
+                $configBatterie->setMicroGrosseCaisse($materielSuggereRepository->find($batterieChoisis['grosseCaisse'][1] ?? null));
+                $configBatterie->setMicroCaisseClaire($materielSuggereRepository->find($batterieChoisis['caisseClaire'][1] ?? null));
+                $configBatterie->setMicroCharleston($materielSuggereRepository->find($batterieChoisis['charleston'][1] ?? null));
+                $emi->persist($configBatterie);
+            }
+
             $emi->flush();
         }
-    
+
         return $this->render('scene/materielsuggere.html.twig', [
-                'scene' => $scene,
+            'scene' => $scene,
+            'equipementsBatterie' => $equipementsBatterie,
         ]);
-    }   
+    }
     }

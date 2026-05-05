@@ -102,7 +102,6 @@ class MaterielSuggere
     public function removeElementScene(ElementScene $elementScene): static
     {
         if ($this->elementScenes->removeElement($elementScene)) {
-            // set the owning side to null (unless already changed)
             if ($elementScene->getMaterielSuggere() === $this) {
                 $elementScene->setMaterielSuggere(null);
             }
@@ -111,15 +110,4 @@ class MaterielSuggere
         return $this;
     }
 
-    public function getConfigBatterie(): ?ConfigBatterie
-    {
-        return $this->configBatterie;
-    }
-
-    public function setConfigBatterie(?ConfigBatterie $configBatterie): static
-    {
-        $this->configBatterie = $configBatterie;
-
-        return $this;
-    }
 }

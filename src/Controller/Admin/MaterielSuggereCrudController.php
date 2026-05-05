@@ -22,7 +22,6 @@ class MaterielSuggereCrudController extends AbstractCrudController
             IntegerField::new('quantite'),
             AssociationField::new('materiel', 'Materiel'),
             AssociationField::new('instrument', 'Instrument'),
-            AssociationField::new('configBatterie', 'ConfigBatterie'),
         ];
     }
 }

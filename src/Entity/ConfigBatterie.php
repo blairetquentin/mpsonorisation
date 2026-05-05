@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ConfigBatterieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConfigBatterieRepository::class)]
@@ -34,16 +32,20 @@ class ConfigBatterie
     #[ORM\JoinColumn(nullable: true)]
     private ?ElementScene $elementScene = null;
 
-    /**
-     * @var Collection<int, MaterielSuggere>
-     */
-    #[ORM\OneToMany(targetEntity: MaterielSuggere::class, mappedBy: 'configBatterie')]
-    private Collection $materielSuggeres;
+    #[ORM\ManyToOne]
+    private ?MaterielSuggere $microTom = null;
 
-    public function __construct()
-    {
-        $this->materielSuggeres = new ArrayCollection();
-    }
+    #[ORM\ManyToOne]
+    private ?MaterielSuggere $microCymbale = null;
+
+    #[ORM\ManyToOne]
+    private ?MaterielSuggere $microGrosseCaisse = null;
+
+    #[ORM\ManyToOne]
+    private ?MaterielSuggere $microCaisseClaire = null;
+
+    #[ORM\ManyToOne]
+    private ?MaterielSuggere $microCharleston = null;
 
     public function getId(): ?int
     {
@@ -120,5 +122,65 @@ class ConfigBatterie
     public function __toString(): string
     {
         return 'Batterie - ' . $this->elementScene->getScene()->getNomArtiste();
+    }
+
+    public function getMicroTom(): ?MaterielSuggere
+    {
+        return $this->microTom;
+    }
+
+    public function setMicroTom(?MaterielSuggere $microTom): static
+    {
+        $this->microTom = $microTom;
+
+        return $this;
+    }
+
+    public function getMicroCymbale(): ?MaterielSuggere
+    {
+        return $this->microCymbale;
+    }
+
+    public function setMicroCymbale(?MaterielSuggere $microCymbale): static
+    {
+        $this->microCymbale = $microCymbale;
+
+        return $this;
+    }
+
+    public function getMicroGrosseCaisse(): ?MaterielSuggere
+    {
+        return $this->microGrosseCaisse;
+    }
+
+    public function setMicroGrosseCaisse(?MaterielSuggere $microGrosseCaisse): static
+    {
+        $this->microGrosseCaisse = $microGrosseCaisse;
+
+        return $this;
+    }
+
+    public function getMicroCaisseClaire(): ?MaterielSuggere
+    {
+        return $this->microCaisseClaire;
+    }
+
+    public function setMicroCaisseClaire(?MaterielSuggere $microCaisseClaire): static
+    {
+        $this->microCaisseClaire = $microCaisseClaire;
+
+        return $this;
+    }
+
+    public function getMicroCharleston(): ?MaterielSuggere
+    {
+        return $this->microCharleston;
+    }
+
+    public function setMicroCharleston(?MaterielSuggere $microCharleston): static
+    {
+        $this->microCharleston = $microCharleston;
+
+        return $this;
     }
 }

@@ -111,6 +111,12 @@ class AppFixtures extends Fixture
             ['libelle' => 'Ampli guitare',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli-guitare.png'],
             ['libelle' => 'Ampli basse',         'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/ampli.png'],
             ['libelle' => 'Retour de scène',     'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'En direct',           'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'Cymballe',            'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'Tom',                 'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'Grosse caisse',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'Caisse claire',       'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png'],
+            ['libelle' => 'Charleston',          'type' => 'equipement', 'largeur' => 50,  'hauteur' => 50,  'url' => '/images/instruments/retour.png']
         ];
 
         foreach ($instrumentsData as $d) {
@@ -126,6 +132,11 @@ class AppFixtures extends Fixture
         $materielSuggereData = [
         ['instrument' => 'Ampli guitare', 'materiel' => 'Micro Shure SM57', 'quantite' => 1],
         ['instrument' => 'Ampli basse',   'materiel' => 'Micro Shure Beta 52A', 'quantite' => 1],
+        ['instrument' => 'Cymballe',      'materiel' => 'Micro Shure SM81', 'quantite' => 1],
+        ['instrument' => 'Tom',           'materiel' => 'Micro Shure SM57', 'quantite' => 1],
+        ['instrument' => 'Grosse caisse', 'materiel' => 'Micro Shure Beta 52A', 'quantite' => 1],
+        ['instrument' => 'Caisse claire', 'materiel' => 'Micro Shure SM57', 'quantite' => 1],
+        ['instrument' => 'Charleston',    'materiel' => 'Micro Shure SM57', 'quantite' => 1],
         ];
 
         foreach ($materielSuggereData as $ms) {

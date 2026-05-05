@@ -39,10 +39,144 @@
                 {% endfor %}
             </tbody>
         </table>
+    <table class="maetriel-suggere table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Élément</th>
+                <th scope="col">Micro</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for element in scene.elementScenes %}
+                {% if element.configBatterie %}
+
+                    {% for i in 1..element.configBatterie.nbToms %}
+                    <tr>
+                        <td>Tom {{ i }}</td>
+                        <td>
+                            <select name="batterie[tom][{{ i }}]" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                {% for equipement in equipementsBatterie %}
+                                    {% if equipement.libelle == 'Tom' %}
+                                        {% for materielSuggere in equipement.materielSuggeres %}
+                                            <option value="{{ materielSuggere.id }}"
+                                                {% if element.configBatterie.microTom and element.configBatterie.microTom.id == materielSuggere.id %}
+                                                    selected
+                                                {% endif %}>
+                                                {{ materielSuggere.materiel.libelle }}
+                                            </option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for i in 1..element.configBatterie.nbCymbales %}
+                    <tr>
+                        <td>Cymbale {{ i }}</td>
+                        <td>
+                            <select name="batterie[cymbale][{{ i }}]" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                {% for equipement in equipementsBatterie %}
+                                    {% if equipement.libelle == 'Cymbale' %}
+                                        {% for materielSuggere in equipement.materielSuggeres %}
+                                            <option value="{{ materielSuggere.id }}"
+                                                {% if element.configBatterie.microCymbale and element.configBatterie.microCymbale.id == materielSuggere.id %}
+                                                    selected
+                                                {% endif %}>
+                                                {{ materielSuggere.materiel.libelle }}
+                                            </option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for i in 1..element.configBatterie.nbGrosseCaisse %}
+                    <tr>
+                        <td>Grosse caisse {{ i }}</td>
+                        <td>
+                            <select name="batterie[grosseCaisse][{{ i }}]" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                {% for equipement in equipementsBatterie %}
+                                    {% if equipement.libelle == 'Grosse caisse' %}
+                                        {% for materielSuggere in equipement.materielSuggeres %}
+                                            <option value="{{ materielSuggere.id }}"
+                                                {% if element.configBatterie.microGrosseCaisse and element.configBatterie.microGrosseCaisse.id == materielSuggere.id %}
+                                                    selected
+                                                {% endif %}>
+                                                {{ materielSuggere.materiel.libelle }}
+                                            </option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for i in 1..element.configBatterie.nbCaisseClaire %}
+                    <tr>
+                        <td>Caisse claire {{ i }}</td>
+                        <td>
+                            <select name="batterie[caisseClaire][{{ i }}]" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                {% for equipement in equipementsBatterie %}
+                                    {% if equipement.libelle == 'Caisse claire' %}
+                                        {% for materielSuggere in equipement.materielSuggeres %}
+                                            <option value="{{ materielSuggere.id }}"
+                                                {% if element.configBatterie.microCaisseClaire and element.configBatterie.microCaisseClaire.id == materielSuggere.id %}
+                                                    selected
+                                                {% endif %}>
+                                                {{ materielSuggere.materiel.libelle }}
+                                            </option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% for i in 1..element.configBatterie.nbCharleston %}
+                    <tr>
+                        <td>Charleston {{ i }}</td>
+                        <td>
+                            <select name="batterie[charleston][{{ i }}]" class="form-select form-select-sm">
+                                <option value="">-- Aucun --</option>
+                                {% for equipement in equipementsBatterie %}
+                                    {% if equipement.libelle == 'Charleston' %}
+                                        {% for materielSuggere in equipement.materielSuggeres %}
+                                            <option value="{{ materielSuggere.id }}"
+                                                {% if element.configBatterie.microCharleston and element.configBatterie.microCharleston.id == materielSuggere.id %}
+                                                    selected
+                                                {% endif %}>
+                                                {{ materielSuggere.materiel.libelle }}
+                                            </option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
         <button type="submit" class="btn btn-success mt-2">
             Sauvegarder les équipements
         </button>
     </form>
 </div>
-
+<tbody>
+              
 {% endblock %}
+        
+        
+
