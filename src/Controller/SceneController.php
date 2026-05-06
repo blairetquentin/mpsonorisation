@@ -35,23 +35,47 @@ class SceneController extends AbstractController
     #[Route('/scene/mascene/{id}', name:'app_scene_mascene')]
     public function mascene(int $id, SceneRepository $sceneRepository) : Response
     {
-        $scene= $sceneRepository->find($id);
-        $recap =[];
+        $scene = $sceneRepository->find($id);
+        
         if ($scene->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
 
-        foreach($scene->getElementScenes() as $element){
-            if ($element->getConfigBatterie() && $element->getMaterielSuggere()){
+        $recap = [];
+
+        foreach($scene->getElementScenes() as $element) {
+         
+            if ($element->getMaterielSuggere()) {
                 $libelle = $element->getMaterielSuggere()->getMateriel()->getLibelle();
-                $recap[$libelle] = ($recap[$libelle]?? 0)+1;
+                $recap[$libelle] = ($recap[$libelle] ?? 0) + 1;
+            }
+
+            if ($element->getConfigBatterie()) {
+                $config = $element->getConfigBatterie();
+
+                $gettersAvecNombre = [
+                    'microTom' => $config->getNbToms(),
+                    'microCymbale' => $config->getNbCymbales(),
+                    'microGrosseCaisse' => $config->getNbGrosseCaisse(),
+                    'microCaisseClaire' => $config->getNbCaisseClaire(),
+                    'microCharleston' => $config->getNbCharleston(),
+                ];
+
+                foreach ($gettersAvecNombre as $getter => $nombre) {
+                    $micro = $config->{'get' . ucfirst($getter)}();
+                    if ($micro && $nombre) {
+                        $libelle = $micro->getMateriel()->getLibelle();
+                        $recap[$libelle] = ($recap[$libelle] ?? 0) + $nombre;
+                    }
+                }
             }
         }
-        return $this->render('scene/mascene.html.twig', [
-            'scene' => $scene,
-            'recap' => $recap,
-         ]);
-    }
+
+    return $this->render('scene/mascene.html.twig', [
+        'scene' => $scene,
+        'recap' => $recap,
+    ]);
+}
 
     #[Route('scene/equipement/{id}', name:'app_scene_mesequipements')]
     public function mesequipements(int $id, SceneRepository $sceneRepository,ElementSceneRepository $elementSceneRepository, InstrumentsRepository $instrumentsRepository, Request $request, EntityManagerInterface $emi) : Response

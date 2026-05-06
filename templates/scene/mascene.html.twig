@@ -91,6 +91,22 @@
             {% endfor %}
         {% endif %}
 
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Matériel</th>
+                    <th>Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for libelle, quantite in recap %}
+                    <tr>
+                        <td>{{ libelle }}</td>
+                        <td>{{ quantite }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}
