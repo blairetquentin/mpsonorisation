@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use App\Entity\ConfigBatterie;
 use App\Entity\ElementScene;
-use App\Entity\MaterielSuggere;
 use App\Entity\Scene;
 use App\Form\EvenementsceneType;
 use App\Repository\ConfigBatterieRepository;
@@ -16,13 +15,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 class SceneController extends AbstractController
 {
     #[Route('/scene' , name : 'app_scene')]
     public function index(SceneRepository $sceneRepository) : Response
     {
-        $scenes = $sceneRepository->findAll();
+        $scenes = $sceneRepository->findBy(['user'=> $this->getUser()]);
        
 
         return $this->render('scene/index.html.twig', [
@@ -32,11 +33,23 @@ class SceneController extends AbstractController
     }
 
     #[Route('/scene/mascene/{id}', name:'app_scene_mascene')]
-    public function mascene(int $id, SceneRepository $sceneRepository,  ConfigBatterieRepository $configBatterieRepository) : Response
+    public function mascene(int $id, SceneRepository $sceneRepository) : Response
     {
         $scene= $sceneRepository->find($id);
+        $recap =[];
+        if ($scene->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        foreach($scene->getElementScenes() as $element){
+            if ($element->getConfigBatterie() && $element->getMaterielSuggere()){
+                $libelle = $element->getMaterielSuggere()->getMateriel()->getLibelle();
+                $recap[$libelle] = ($recap[$libelle]?? 0)+1;
+            }
+        }
         return $this->render('scene/mascene.html.twig', [
             'scene' => $scene,
+            'recap' => $recap,
          ]);
     }
 
@@ -44,6 +57,9 @@ class SceneController extends AbstractController
     public function mesequipements(int $id, SceneRepository $sceneRepository,ElementSceneRepository $elementSceneRepository, InstrumentsRepository $instrumentsRepository, Request $request, EntityManagerInterface $emi) : Response
     {
         $scene= $sceneRepository->find($id);
+        if ($scene->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
         $instruments = $instrumentsRepository->findBy(['type' => 'instrument']);
         $equipements = $instrumentsRepository->findBy(['type' => 'equipement']);
 
@@ -111,6 +127,9 @@ class SceneController extends AbstractController
     public function modifier(int $id, Request $request, SceneRepository $sceneRepository, EntityManagerInterface $emi, InstrumentsRepository $instrumentsRepository) : Response
     {
         $scene = $sceneRepository->find($id);
+        if ($scene->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
         $form = $this->createForm(EvenementsceneType::class, $scene);
         $form->handleRequest($request);
         $instruments = $instrumentsRepository->findBy(['type' => 'instrument']);
@@ -146,6 +165,9 @@ class SceneController extends AbstractController
     #[Route('scene/batterie/{id}', name: 'app_scene_batterie')]
     public function batterie(int $id, ElementSceneRepository $elementSceneRepository, ConfigBatterieRepository $configBatterieRepository, Request $request, EntityManagerInterface $emi) : Response {
         $batterie = $elementSceneRepository->find($id);
+        if ($batterie->getScene()->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
         $configbatterie = $configBatterieRepository->findOneBy(['elementScene' => $batterie]);
         if($request->isMethod('POST')){
             if (!$configbatterie) {
@@ -172,10 +194,16 @@ class SceneController extends AbstractController
     public function delete(int $id, ElementSceneRepository $elementSceneRepository, EntityManagerInterface $emi, Request $request) : Response
     {
         $elementscene = $elementSceneRepository->find($id);
-        
+
         if (!$elementscene) {
             return $this->redirectToRoute('app_scene');
         }
+
+        if ($elementscene->getScene()->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+        
+        
 
         if (!$this->isCsrfTokenValid('delete_element_' . $id, $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
@@ -192,6 +220,9 @@ class SceneController extends AbstractController
     public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, ConfigBatterieRepository $configBatterieRepository, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
     {
         $scene = $sceneRepository->find($id);
+        if ($scene->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
         $equipementsBatterie = $instrumentsRepository->findBy(['type' => 'equipement_batterie']);
 
         if($request->isMethod('POST')) {

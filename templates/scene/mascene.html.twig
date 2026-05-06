@@ -13,6 +13,7 @@
                     <th scope="col">Nom du musicien</th>
                     <th scope="col">Nom de l'instrument</th>
                     <th scope="col">Équipement</th>
+                    <th scope="col">Materiel Suggere</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,13 @@
                             {% endif %}
                         {% endif %}
                     </td>
+                    <td>
+                        {% if element.materielSuggere %}
+                            {{element.materielSuggere.materiel.libelle}}
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             {% endif %}
@@ -46,29 +54,36 @@
                     <table class="table table-bordered mt-3">
                         <thead>
                             <tr>
-                                <th colspan="2">Config batterie — {{ element.nomMusicien }}</th>
+                                <th scope="col">Config batterie — {{ element.nomMusicien }}</th>
+                                <th scope="col">nombre</th>
+                                <th scope="col">Micro Suggere</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Toms</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbToms : '--' }}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microTom ? element.configBatterie.microTom.materiel.libelle : '--'}}</td>>
                             </tr>
                             <tr>
                                 <td>Cymbales</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbCymbales : '--' }}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microCymbale ? element.configBatterie.microCymbale.materiel.libelle : '--'}}</td>
                             </tr>
                             <tr>
                                 <td>Grosse caisse</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbGrosseCaisse : '--' }}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microGrosseCaisse ? element.configBatterie.microGrosseCaisse.materiel.libelle : '--'}}</td>
                             </tr>
                             <tr>
                                 <td>Caisse claire</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbCaisseClaire : '--' }}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microGrosseCaisse ? element.configBatterie.microCaisseClaire.materiel.libelle : '--'}}</td>
                             </tr>
                             <tr>
                                 <td>Charleston</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbCharleston : '--' }}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microCharleston ? element.configBatterie.microCharleston.materiel.libelle : '--'}}</td>
                             </tr>
                         </tbody>
                     </table>
