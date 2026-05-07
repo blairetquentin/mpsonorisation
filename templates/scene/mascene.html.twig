@@ -13,6 +13,7 @@
                     <th scope="col">Nom du musicien</th>
                     <th scope="col">Nom de l'instrument</th>
                     <th scope="col">Équipement</th>
+                    <th scope="col">Micro chant</th>
                     <th scope="col">Materiel Suggere</th>
                 </tr>
             </thead>
@@ -33,6 +34,13 @@
                             {% else %}
                                 --
                             {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if element.micro %}
+                            {{ element.micro.libelle }}
+                        {% else %}
+                            --
                         {% endif %}
                     </td>
                     <td>

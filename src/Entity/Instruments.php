@@ -30,9 +30,16 @@ class Instruments
     #[ORM\OneToMany(targetEntity: MaterielSuggere::class, mappedBy: 'instrument')]
     private Collection $materielSuggeres;
 
+    /**
+     * @var Collection<int, ElementScene>
+     */
+    #[ORM\OneToMany(targetEntity: ElementScene::class, mappedBy: 'micro')]
+    private Collection $elementScenes;
+
     public function __construct()
     {
         $this->materielSuggeres = new ArrayCollection();
+        $this->elementScenes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,5 +115,35 @@ class Instruments
     public function __toString(): string
     {
         return $this->libelle;
+    }
+
+    /**
+     * @return Collection<int, ElementScene>
+     */
+    public function getElementScenes(): Collection
+    {
+        return $this->elementScenes;
+    }
+
+    public function addElementScene(ElementScene $elementScene): static
+    {
+        if (!$this->elementScenes->contains($elementScene)) {
+            $this->elementScenes->add($elementScene);
+            $elementScene->setMicro($this);
+        }
+
+        return $this;
+    }
+
+    public function removeElementScene(ElementScene $elementScene): static
+    {
+        if ($this->elementScenes->removeElement($elementScene)) {
+            // set the owning side to null (unless already changed)
+            if ($elementScene->getMicro() === $this) {
+                $elementScene->setMicro(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -86,9 +86,11 @@ class SceneController extends AbstractController
         }
         $instruments = $instrumentsRepository->findBy(['type' => 'instrument']);
         $equipements = $instrumentsRepository->findBy(['type' => 'equipement']);
+        $micros       = $instrumentsRepository->findBy(['type'=>'micro']);
 
         if($request->isMethod('POST')){
             $equipementsChoisis = $request->request->all('equipement');
+            $microChoisis = $request->request->all('micro');
             foreach($equipementsChoisis as $elementSceneId => $equipementId){
                 $elementScene = $elementSceneRepository->find($elementSceneId);
                 if(!$elementScene) {
@@ -101,6 +103,20 @@ class SceneController extends AbstractController
                 $elementScene->setEquipement($equipement);
                 $emi->persist($elementScene);
             }
+
+            foreach($microChoisis as $elementSceneId => $microId){
+                $elementScene = $elementSceneRepository->find($elementSceneId);
+                if(!$elementScene) {
+                    continue;
+                }
+                $micro = $instrumentsRepository->find($microId);
+                if(!$micro) {
+                    continue;
+                }
+                $elementScene->setMicro($micro);
+                $emi->persist($elementScene);
+
+            }
             $emi->flush();
         };
         
@@ -108,6 +124,7 @@ class SceneController extends AbstractController
             'scene' => $scene,
             'instruments' => $instruments,
             'equipements' => $equipements,
+            'micros'       => $micros,
         ]);
     }
 
@@ -227,8 +244,6 @@ class SceneController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         
-        
-
         if (!$this->isCsrfTokenValid('delete_element_' . $id, $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }

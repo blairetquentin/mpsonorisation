@@ -11,12 +11,12 @@
                 <th scope="col">Nom du musicien</th>
                 <th scope="col">Nom de l'instrument</th>
                 <th scope="col">Équipement</th>
+                <th scope="col">Micro Voix</th>
             </tr>
         </thead>
         <tbody>
         {% if scene.id %}
             {% for element in scene.elementScenes %}
-                {% if element.instrument.libelle != "Batterie" %}
                 <tr>
                     <td>{{ element.nomMusicien }}</td>
                     <td>{{ element.instrument.libelle }}</td>
@@ -33,8 +33,22 @@
                             {% endfor %}
                         </select>
                     </td>
+                    <td>
+                        <select name="micro[{{ element.id }}]" class="form-select form-select-sm">
+                            <option value="">-- Aucun --</option>
+                            {% for micro in micros %}
+                                <option value="{{ micro.id }}"
+                                    {% if element.micro and element.micro.id == micro.id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ micro.libelle }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
                 </tr>
-                {% endif %}
+
             {% endfor %}
         {% endif %}
         </tbody>

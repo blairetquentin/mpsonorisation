@@ -39,6 +39,9 @@ class ElementScene
     #[ORM\ManyToOne(inversedBy: 'elementScenes')]
     private ?MaterielSuggere $materielSuggere = null;
 
+    #[ORM\ManyToOne(inversedBy: 'elementScenes')]
+    private ?Instruments $micro = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +124,18 @@ class ElementScene
     public function setMaterielSuggere(?MaterielSuggere $materielSuggere): static
     {
         $this->materielSuggere = $materielSuggere;
+
+        return $this;
+    }
+
+    public function getMicro(): ?Instruments
+    {
+        return $this->micro;
+    }
+
+    public function setMicro(?Instruments $micro): static
+    {
+        $this->micro = $micro;
 
         return $this;
     }
