@@ -49,6 +49,13 @@ class SceneController extends AbstractController
                 $libelle = $element->getMaterielSuggere()->getMateriel()->getLibelle();
                 $recap[$libelle] = ($recap[$libelle] ?? 0) + 1;
             }
+            if ($element->getMicro()) {
+                $micros = $element->getMicro()->getMaterielSuggeres();
+                foreach ($micros as $microSuggere) {
+                    $libelle = $microSuggere->getMateriel()->getLibelle();
+                    $recap[$libelle] = ($recap[$libelle] ?? 0) + 1;
+                }
+            }
 
             if ($element->getConfigBatterie()) {
                 $config = $element->getConfigBatterie();
@@ -256,7 +263,7 @@ class SceneController extends AbstractController
     }
 
     #[Route('scene/materielsuggere/{id}', name:'app_scene_materielsuggere')]
-    public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, ConfigBatterieRepository $configBatterieRepository, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
+    public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
     {
         $scene = $sceneRepository->find($id);
         if ($scene->getUser() !== $this->getUser()) {

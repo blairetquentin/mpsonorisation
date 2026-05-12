@@ -86,9 +86,11 @@ class PanierController extends AbstractController
             }
 
             $em->flush();
-
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => true]);
+            }
             $referer = $request->headers->get('referer');
-            if ($referer) {
+            if($referer) {
                 return new RedirectResponse($referer);
             }
             return $this->redirectToRoute('app_catalogue');

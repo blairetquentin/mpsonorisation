@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\MaterielRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -35,4 +36,25 @@ class CatalogueController extends AbstractController
         return $this->render('catalogue/detail.html.twig' , [
             'materiel' => $materiel,
         ]);
-}}
+    }
+
+    #[Route('/catalogue/search', name:'app_catalogue-search')]
+    public function search(Request $request, MaterielRepository $materielRepo) : Response
+    {
+        $q = $request->query->get('q','');
+
+        if (strlen($q)< 2 ){
+            return $this->json([]);
+        }
+
+        $resultats = $materielRepo->findBySearch($q);
+
+        $data = array_map(function($m) {
+            return [
+                'id' => $m->getId(),
+                'nom' => $m->getLibelle(),
+            ];
+        },$resultats); 
+        return $this->json($data);
+    }
+}

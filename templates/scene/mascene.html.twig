@@ -5,9 +5,9 @@
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
 
-    <div style="display: flex; gap: 40px; align-items: flex-start;">
+    <div class="tableau-mascene">
 
-        <table class="tableau-musicien table-bordered mt-3">
+        <table class="table-musicien  mt-3">
             <thead>
                 <tr>
                     <th scope="col">Nom du musicien</th>
@@ -38,7 +38,9 @@
                     </td>
                     <td>
                         {% if element.micro %}
-                            {{ element.micro.libelle }}
+                            {% for materielSuggere in element.micro.materielSuggeres %}
+                                {{materielSuggere.materiel.libelle}}
+                            {% endfor %}
                         {% else %}
                             --
                         {% endif %}
@@ -55,11 +57,10 @@
             {% endif %}
             </tbody>
         </table>
-
         {% if scene.id %}
             {% for element in scene.elementScenes %}
                 {% if element.instrument.libelle == 'Batterie' %}
-                    <table class="table table-bordered mt-3">
+                    <table class="table-batterie  mt-3">
                         <thead>
                             <tr>
                                 <th scope="col">Config batterie — {{ element.nomMusicien }}</th>
@@ -71,7 +72,7 @@
                             <tr>
                                 <td>Toms</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbToms : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microTom ? element.configBatterie.microTom.materiel.libelle : '--'}}</td>>
+                                <td>{{ element.configBatterie and element.configBatterie.microTom ? element.configBatterie.microTom.materiel.libelle : '--'}}</td>
                             </tr>
                             <tr>
                                 <td>Cymbales</td>
@@ -86,7 +87,7 @@
                             <tr>
                                 <td>Caisse claire</td>
                                 <td>{{ element.configBatterie ? element.configBatterie.nbCaisseClaire : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microGrosseCaisse ? element.configBatterie.microCaisseClaire.materiel.libelle : '--'}}</td>
+                                <td>{{ element.configBatterie and element.configBatterie.microCaisseClaire ? element.configBatterie.microCaisseClaire.materiel.libelle : '--'}}</td>
                             </tr>
                             <tr>
                                 <td>Charleston</td>
@@ -99,7 +100,7 @@
             {% endfor %}
         {% endif %}
 
-        <table class="table table-bordered mt-3">
+        <table class="table-resume  mt-3">
             <thead>
                 <tr>
                     <th>Matériel</th>

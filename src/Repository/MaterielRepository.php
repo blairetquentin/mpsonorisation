@@ -25,4 +25,14 @@ class MaterielRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
+
+    public function FindBySearch(string $q):array
+    {
+        return $this->createQueryBuilder('m')
+        ->where('m.libelle LIKE :q')
+        ->setParameter('q', '%' . $q . '%')
+        ->setMaxResults(8)
+        ->getQuery()
+        ->getResult();
+    }
 }
