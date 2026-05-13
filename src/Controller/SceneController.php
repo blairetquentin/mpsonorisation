@@ -135,6 +135,24 @@ class SceneController extends AbstractController
         ]);
     }
 
+    #[Route('/scene/search', name: 'app_scene_search')]
+    public function search(Request $request, InstrumentsRepository $instrumentsRepository) : Response
+    {
+        $q = $request->query->get('q','');
+         if (strlen($q)< 1 ){
+            return $this->json([]);
+        }
+
+        $resultats = $instrumentsRepository->findBySearch($q);
+        $data = array_map(function ($m){
+            return[
+                'id' => $m->getId(),
+                'libelle' => $m->getLibelle(),
+            ];
+        }, $resultats);
+        return $this->json($data);
+    }
+
     #[Route('/scene/cree', name: 'app_scene_form')]
     public function cree(Request $request, EntityManagerInterface $emi, InstrumentsRepository $instrumentsRepository) : Response 
     {
@@ -147,7 +165,7 @@ class SceneController extends AbstractController
             $scene->setUser($this->getUser());
             $emi->persist($scene);
 
-            $instrumentIds = $request->request->all('instruments');
+            $instrumentIds = $request->request->all('instrumentsId');
             $nomMusiciens  = $request->request->all('nomMusicien');
             foreach ($instrumentIds as $index =>$instrumentId) {
                 $instrument = $instrumentsRepository->find($instrumentId);

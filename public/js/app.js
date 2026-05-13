@@ -1,5 +1,50 @@
+//autocomplete instrument
+function attachAutocomplete(input, suggestions){
+    if(input) {
+        input.addEventListener('input', function(){
+            const q = input.value.trim();
+            if (q.length < 1) {
+                suggestions.style.display = 'none';;
+                return;
+            }
+            fetch('/scene/search?q=' +encodeURIComponent(q), {
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                suggestions.innerHTML = '';
+                if (data.length === 0) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                data.forEach(function(item){
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.style.cursor = 'pointer';
+                    li.textContent = item.libelle;
+                    li.addEventListener('click', function(){
+                        document.getElementById('recherche-instrument').value = item.libelle;
+                        document.getElementById('instrument-id-0').value = item.id;
+                    })
+
+                    suggestions.appendChild(li);
+                });
+                suggestions.style.display = 'block';
+            });
+        });
+        document.addEventListener('click', function(e){
+            if (!input.contains(e.target)) {
+                suggestions.style.display = 'none';
+            }
+        })
+    }
+}
 
 //ajout isntrument creation scene
+attachAutocomplete(
+    document.getElementById('recherche-instrument'),
+    document.getElementById('suggestions-instrument')
+);
 
 let index = 1;
 const addBtn = document.getElementById('add_instrument');
@@ -8,15 +53,19 @@ if (addBtn) {
         const div = document.createElement('div');
         div.innerHTML = `
             <div class="instrument-row">
-                <select name="instruments[${index}]">
-                    ${document.querySelector('select[name="instruments[0]"]').innerHTML}
-                </select>
+                <input type="text" name="instruments[${index}]" id="recherche-instrument"  placeholder="Rechercher un instrument..."  autocomplete="off">
+                <ul class="list-group position-absolute w-100 z-3" style="display:none;"></ul>
+                <input type="hidden" name="instrumentsId[${index}]" id="instrument-id-${index}">
                 <input type="text" name="nomMusicien[${index}]" placeholder="Nom musicien">
                 <button type="button" style="color:red; background:none; border:none;">✕</button>
             </div>
         `;
         document.getElementById('instruments').appendChild(div);
         index++;
+        attachAutocomplete(
+            div.querySelector('input[type="text"]'),
+            div.querySelector('ul')
+        );
     });
 
     document.getElementById('instruments').addEventListener('click', function(e) {
@@ -108,3 +157,48 @@ if(input) {
         }
     })
 }
+
+//autocomplete instrument
+function attachAutocomplete(input, suggestions){
+    if(input) {
+        input.addEventListener('input', function(){
+            const q = input.value.trim();
+            if (q.length < 1) {
+                suggestions.style.display = 'none';;
+                return;
+            }
+            fetch('/scene/search?q=' +encodeURIComponent(q), {
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                suggestions.innerHTML = '';
+                if (data.length === 0) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                data.forEach(function(item){
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.style.cursor = 'pointer';
+                    li.textContent = item.libelle;
+                    li.addEventListener('click', function(){
+                        const row = li.closest('.instrument-row');
+                            row.querySelector('input[type="text"]').value = item.libelle;
+                            row.querySelector('input[type="hidden"]').value = item.id;
+                            suggestions.style.display = 'none';
+                    })
+
+                    suggestions.appendChild(li);
+                });
+                suggestions.style.display = 'block';
+            });
+        });
+        document.addEventListener('click', function(e){
+            if (!input.contains(e.target)) {
+                suggestions.style.display = 'none';
+            }
+        })
+    }
+}
+

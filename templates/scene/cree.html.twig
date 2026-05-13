@@ -13,13 +13,12 @@
 
     <div id="instruments">
         <h2>Ajouter un nouvel instrument :</h2>
-        <select name="instruments[0]">
-            <option value="">-- Aucun --</option>
-            {% for instrument in instruments %}
-                <option value="{{ instrument.id }}">{{ instrument.libelle }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
+        <div class="instrument-row">
+            <input type="text" name="instruments[0]" id="recherche-instrument"  placeholder="Rechercher un instrument..."  autocomplete="off">
+            <input type="hidden" name="instrumentsId[0]" id="instrument-id-0">
+            <ul id="suggestions-instrument" class="list-group position-absolute w-100 z-3" style="display:none;"></ul>
+            <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
+        </div>
     </div>
 
     <button type="button" id="add_instrument" class="btn btn-secondary mt-2 d-block">

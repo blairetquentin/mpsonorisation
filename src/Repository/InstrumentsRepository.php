@@ -15,6 +15,14 @@ class InstrumentsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Instruments::class);
     }
-
+    public function FindBySearch(string $q):array
+    {
+        return $this->createQueryBuilder('m')
+        ->where('m.libelle LIKE :q')
+        ->setParameter('q', '%' . $q . '%')
+        ->setMaxResults(8)
+        ->getQuery()
+        ->getResult();
+    }
     
 }
