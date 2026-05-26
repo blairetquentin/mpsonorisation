@@ -1,64 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifer scene{% endblock %}
+{% block title %}Modifier la scène{% endblock %}
 
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
-<div class="container py-5">
-    <h1 class="mb-4">Modifier Scene</h1>
 
-{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
-    {{ form_row(form.nomEvenement) }}
-    {{ form_row(form.dateEvenement) }}
-    {{ form_row(form.nomArtiste) }}
+    <div class="container py-4">
 
-    <div id="instruments">
-        <h2>Ajouter un nouvel instrument :</h2>
-        <select name="instruments[0]">
-            <option value="">-- Aucun --</option>
-            {% for instrument in instruments %}
-                <option value="{{ instrument.id }}">{{ instrument.libelle }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
+        <h2 class="mb-4 fw-bold">Modifier la scène</h2>
+
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Informations de l'événement
+                </div>
+                <div class="card-body">
+                    {{ form_row(form.nomEvenement) }}
+                    {{ form_row(form.dateEvenement) }}
+                    {{ form_row(form.nomArtiste) }}
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    Ajouter un nouvel instrument
+                </div>
+                <div class="card-body">
+                    <div id="instruments">
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col-md-5">
+                                <select name="instruments[0]" class="form-select">
+                                    <option value="">-- Aucun --</option>
+                                    {% for instrument in instruments %}
+                                        <option value="{{ instrument.id }}">{{ instrument.libelle }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" name="nomMusicien[0]" placeholder="Nom du musicien" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add_instrument" class="btn btn-outline-secondary mt-2">
+                        + Ajouter un instrument
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" name="action" value="ajouter" class="btn btn-primary mb-4">
+                 Sauvegarder les modifications
+            </button>
+
+        
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Récapitulatif des instruments
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Nom du musicien</th>
+                                <th>Instrument</th>
+                                <th class="text-center">Supprimer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if scene.id %}
+                                {% for element in scene.elementScenes %}
+                                <tr>
+                                    <td>{{ element.nomMusicien }}</td>
+                                    <td>{{ element.instrument.libelle }}</td>
+                                    <td class="text-center">
+                                        <form method="POST" action="{{ path('app_scene_delete', { id: element.id }) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_element_' ~ element.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">✕</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+
     </div>
 
-    <button type="button" id="add_instrument" class="btn btn-secondary mt-2 d-block">
-        + Ajouter instrument
-    </button>
-
-    <button type="submit" name="action" value="ajouter" class="btn btn-primary mt-2">
-        Sauvegarder les modifications
-    </button>
-
-    <h3 class="mt-4">Recap de vos instruments :</h3>
-    <table class="tableau-musicien table-bordered mt-3">
-        <thead>
-            <tr>
-                <th scope="col">Nom du musicien</th>
-                <th scope="col">Nom de l'instrument</th>
-                <th scope="col">Supprimer</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if scene.id %}
-            {% for element in scene.elementScenes %}
-            <tr>
-                <td>{{ element.nomMusicien }}</td>
-                <td>{{ element.instrument.libelle }}</td>
-                <td>
-                    <form method="POST" action="{{ path('app_scene_delete', { id: element.id }) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_element_' ~ element.id) }}">
-                        <button type="submit" class="btn btn-danger btn-sm">✕</button>
-                    </form>
-                    
-                </td>
-            </tr>
-            {% endfor %}
-        {% endif %}
-        </tbody>
-    </table>
-{{ form_end(form) }}
-
-</div>
 {% endblock %}

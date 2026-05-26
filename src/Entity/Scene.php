@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SceneRepository::class)]
 class Scene
@@ -20,12 +21,15 @@ class Scene
     private ?bool $statut = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de l\'événement est obligatoire')]
     private ?string $nom_evenement = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull(message: 'La date est obligatoire')]
     private ?\DateTime $date_evenement = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le nom de l\'artiste est obligatoire')]
     private ?string $nom_artiste = null;
 
     #[ORM\ManyToOne]

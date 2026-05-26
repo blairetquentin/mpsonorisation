@@ -71,10 +71,8 @@ class PanierController extends AbstractController
                 if ($pm->getMateriel() === $materiel) {
                     $panierMateriel = $pm;
                     break;
-                }
-
-            
-;            }
+                }; 
+            }
             if ($panierMateriel) {
                 $panierMateriel->setQuantite($panierMateriel->getQuantite() + 1);
             }else{

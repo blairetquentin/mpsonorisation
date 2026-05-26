@@ -1,121 +1,144 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ma scene{% endblock %}
+{% block title %}Ma scène{% endblock %}
 
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
 
-    <div class="tableau-mascene">
+    <div class="container py-4">
 
-        <table class="table-musicien  mt-3">
-            <thead>
-                <tr>
-                    <th scope="col">Nom du musicien</th>
-                    <th scope="col">Nom de l'instrument</th>
-                    <th scope="col">Équipement</th>
-                    <th scope="col">Micro chant</th>
-                    <th scope="col">Materiel Suggere</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% if scene.id %}
-                {% for element in scene.elementScenes %}
-                <tr>
-                    <td>{{ element.nomMusicien }}</td>
-                    <td>{{ element.instrument.libelle }}</td>
-                    <td>
-                        {% if element.instrument.libelle == 'Batterie' %}
-                            <a href="{{ path('app_scene_batterie', {id: element.id}) }}" class="btn btn-sm btn-warning">
-                                Config batterie
-                            </a>
-                        {% else %}
-                            {% if element.equipement %}
-                                {{ element.equipement.libelle }}
-                            {% else %}
-                                --
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if element.micro %}
-                            {% for materielSuggere in element.micro.materielSuggeres %}
-                                {{materielSuggere.materiel.libelle}}
-                            {% endfor %}
-                        {% else %}
-                            --
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if element.materielSuggere %}
-                            {{element.materielSuggere.materiel.libelle}}
-                        {% else %}
-                            --
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            {% endif %}
-            </tbody>
-        </table>
+        <h2 class="mb-4 fw-bold">Ma scène</h2>
+
         {% if scene.id %}
-            {% for element in scene.elementScenes %}
-                {% if element.instrument.libelle == 'Batterie' %}
-                    <table class="table-batterie  mt-3">
-                        <thead>
+
+          
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Musiciens & instruments
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-secondary">
                             <tr>
-                                <th scope="col">Config batterie — {{ element.nomMusicien }}</th>
-                                <th scope="col">nombre</th>
-                                <th scope="col">Micro Suggere</th>
+                                <th>Nom du musicien</th>
+                                <th>Instrument</th>
+                                <th>Équipement</th>
+                                <th>Micro chant</th>
+                                <th>Matériel suggéré</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for element in scene.elementScenes %}
                             <tr>
-                                <td>Toms</td>
-                                <td>{{ element.configBatterie ? element.configBatterie.nbToms : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microTom ? element.configBatterie.microTom.materiel.libelle : '--'}}</td>
+                                <td>{{ element.nomMusicien }}</td>
+                                <td>{{ element.instrument.libelle }}</td>
+                                <td>
+                                    {% if element.instrument.libelle == 'Batterie' %}
+                                        <a href="{{ path('app_scene_batterie', {id: element.id}) }}" class="btn btn-sm btn-warning">
+                                            ⚙️ Config batterie
+                                        </a>
+                                    {% else %}
+                                        {{ element.equipement ? element.equipement.libelle : '--' }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if element.micro %}
+                                        {% for materielSuggere in element.micro.materielSuggeres %}
+                                            <span class="badge bg-secondary">{{ materielSuggere.materiel.libelle }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-muted">--</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if element.materielSuggere %}
+                                        <span class="badge bg-primary">{{ element.materielSuggere.materiel.libelle }}</span>
+                                    {% else %}
+                                        <span class="text-muted">--</span>
+                                    {% endif %}
+                                </td>
                             </tr>
-                            <tr>
-                                <td>Cymbales</td>
-                                <td>{{ element.configBatterie ? element.configBatterie.nbCymbales : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microCymbale ? element.configBatterie.microCymbale.materiel.libelle : '--'}}</td>
-                            </tr>
-                            <tr>
-                                <td>Grosse caisse</td>
-                                <td>{{ element.configBatterie ? element.configBatterie.nbGrosseCaisse : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microGrosseCaisse ? element.configBatterie.microGrosseCaisse.materiel.libelle : '--'}}</td>
-                            </tr>
-                            <tr>
-                                <td>Caisse claire</td>
-                                <td>{{ element.configBatterie ? element.configBatterie.nbCaisseClaire : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microCaisseClaire ? element.configBatterie.microCaisseClaire.materiel.libelle : '--'}}</td>
-                            </tr>
-                            <tr>
-                                <td>Charleston</td>
-                                <td>{{ element.configBatterie ? element.configBatterie.nbCharleston : '--' }}</td>
-                                <td>{{ element.configBatterie and element.configBatterie.microCharleston ? element.configBatterie.microCharleston.materiel.libelle : '--'}}</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+         
+            {% for element in scene.elementScenes %}
+                {% if element.instrument.libelle == 'Batterie' %}
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-warning text-dark fw-bold">
+                            🥁 Config batterie — {{ element.nomMusicien }}
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered table-hover mb-0">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>Élément</th>
+                                        <th>Nombre</th>
+                                        <th>Micro suggéré</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Toms</td>
+                                        <td>{{ element.configBatterie ? element.configBatterie.nbToms : '--' }}</td>
+                                        <td>{{ element.configBatterie and element.configBatterie.microTom ? element.configBatterie.microTom.materiel.libelle : '--' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cymbales</td>
+                                        <td>{{ element.configBatterie ? element.configBatterie.nbCymbales : '--' }}</td>
+                                        <td>{{ element.configBatterie and element.configBatterie.microCymbale ? element.configBatterie.microCymbale.materiel.libelle : '--' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Grosse caisse</td>
+                                        <td>{{ element.configBatterie ? element.configBatterie.nbGrosseCaisse : '--' }}</td>
+                                        <td>{{ element.configBatterie and element.configBatterie.microGrosseCaisse ? element.configBatterie.microGrosseCaisse.materiel.libelle : '--' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Caisse claire</td>
+                                        <td>{{ element.configBatterie ? element.configBatterie.nbCaisseClaire : '--' }}</td>
+                                        <td>{{ element.configBatterie and element.configBatterie.microCaisseClaire ? element.configBatterie.microCaisseClaire.materiel.libelle : '--' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Charleston</td>
+                                        <td>{{ element.configBatterie ? element.configBatterie.nbCharleston : '--' }}</td>
+                                        <td>{{ element.configBatterie and element.configBatterie.microCharleston ? element.configBatterie.microCharleston.materiel.libelle : '--' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 {% endif %}
             {% endfor %}
+
+          
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white fw-bold">
+                    📋 Récapitulatif du matériel
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered table-hover mb-0">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Matériel</th>
+                                <th>Quantité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for libelle, quantite in recap %}
+                                <tr>
+                                    <td>{{ libelle }}</td>
+                                    <td><span class="badge bg-dark">{{ quantite }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         {% endif %}
 
-        <table class="table-resume  mt-3">
-            <thead>
-                <tr>
-                    <th>Matériel</th>
-                    <th>Quantité</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for libelle, quantite in recap %}
-                    <tr>
-                        <td>{{ libelle }}</td>
-                        <td>{{ quantite }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
-
 {% endblock %}

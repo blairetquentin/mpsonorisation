@@ -36,11 +36,10 @@ class SceneController extends AbstractController
     public function mascene(int $id, SceneRepository $sceneRepository) : Response
     {
         $scene = $sceneRepository->find($id);
-        
         if ($scene->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
-
+        
         $recap = [];
 
         foreach($scene->getElementScenes() as $element) {
@@ -56,7 +55,6 @@ class SceneController extends AbstractController
                     $recap[$libelle] = ($recap[$libelle] ?? 0) + 1;
                 }
             }
-
             if ($element->getConfigBatterie()) {
                 $config = $element->getConfigBatterie();
 
@@ -67,7 +65,6 @@ class SceneController extends AbstractController
                     'microCaisseClaire' => $config->getNbCaisseClaire(),
                     'microCharleston' => $config->getNbCharleston(),
                 ];
-
                 foreach ($gettersAvecNombre as $getter => $nombre) {
                     $micro = $config->{'get' . ucfirst($getter)}();
                     if ($micro && $nombre) {
@@ -77,15 +74,15 @@ class SceneController extends AbstractController
                 }
             }
         }
-
     return $this->render('scene/mascene.html.twig', [
         'scene' => $scene,
         'recap' => $recap,
     ]);
-}
+    }
 
     #[Route('scene/equipement/{id}', name:'app_scene_mesequipements')]
-    public function mesequipements(int $id, SceneRepository $sceneRepository,ElementSceneRepository $elementSceneRepository, InstrumentsRepository $instrumentsRepository, Request $request, EntityManagerInterface $emi) : Response
+    public function mesequipements(int $id, SceneRepository $sceneRepository,ElementSceneRepository $elementSceneRepository,
+     InstrumentsRepository $instrumentsRepository, Request $request, EntityManagerInterface $emi) : Response
     {
         $scene= $sceneRepository->find($id);
         if ($scene->getUser() !== $this->getUser()) {
@@ -98,6 +95,7 @@ class SceneController extends AbstractController
         if($request->isMethod('POST')){
             $equipementsChoisis = $request->request->all('equipement');
             $microChoisis = $request->request->all('micro');
+
             foreach($equipementsChoisis as $elementSceneId => $equipementId){
                 $elementScene = $elementSceneRepository->find($elementSceneId);
                 if(!$elementScene) {
@@ -110,7 +108,6 @@ class SceneController extends AbstractController
                 $elementScene->setEquipement($equipement);
                 $emi->persist($elementScene);
             }
-
             foreach($microChoisis as $elementSceneId => $microId){
                 $elementScene = $elementSceneRepository->find($elementSceneId);
                 if(!$elementScene) {
@@ -122,11 +119,9 @@ class SceneController extends AbstractController
                 }
                 $elementScene->setMicro($micro);
                 $emi->persist($elementScene);
-
             }
             $emi->flush();
         };
-        
         return $this->render('scene/mesequipements.html.twig', [
             'scene' => $scene,
             'instruments' => $instruments,
@@ -229,7 +224,8 @@ class SceneController extends AbstractController
     }
 
     #[Route('scene/batterie/{id}', name: 'app_scene_batterie')]
-    public function batterie(int $id, ElementSceneRepository $elementSceneRepository, ConfigBatterieRepository $configBatterieRepository, Request $request, EntityManagerInterface $emi) : Response {
+    public function batterie(int $id, ElementSceneRepository $elementSceneRepository, ConfigBatterieRepository 
+    $configBatterieRepository, Request $request, EntityManagerInterface $emi) : Response {
         $batterie = $elementSceneRepository->find($id);
         if ($batterie->getScene()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
@@ -281,12 +277,15 @@ class SceneController extends AbstractController
     }
 
     #[Route('scene/materielsuggere/{id}', name:'app_scene_materielsuggere')]
-    public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
+    public function materielconseille(int $id, InstrumentsRepository $instrumentsRepository, 
+    SceneRepository $sceneRepository, Request $request, ElementSceneRepository $elementSceneRepository, 
+    MaterielSuggereRepository $materielSuggereRepository, EntityManagerInterface $emi) : Response
     {
         $scene = $sceneRepository->find($id);
         if ($scene->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
+
         $equipementsBatterie = $instrumentsRepository->findBy(['type' => 'equipement_batterie']);
 
         if($request->isMethod('POST')) {
@@ -310,7 +309,6 @@ class SceneController extends AbstractController
                     break;
                 }
             }
-
             if($configBatterie && $batterieChoisis) {
                 $configBatterie->setMicroTom($materielSuggereRepository->find($batterieChoisis['tom'][1] ?? null));
                 $configBatterie->setMicroCymbale($materielSuggereRepository->find($batterieChoisis['cymbale'][1] ?? null));
@@ -322,7 +320,6 @@ class SceneController extends AbstractController
 
             $emi->flush();
         }
-
         return $this->render('scene/materielsuggere.html.twig', [
             'scene' => $scene,
             'equipementsBatterie' => $equipementsBatterie,

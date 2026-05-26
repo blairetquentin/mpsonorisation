@@ -23,7 +23,6 @@ class DevisDetailController extends AbstractController
         if (!$devis) {
             throw $this->createNotFoundException('Devis introuvable');
         }
-
         $panier = $devis->getPanier();
         $user = $panier->getUser();
 

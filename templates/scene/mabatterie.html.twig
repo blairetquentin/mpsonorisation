@@ -1,35 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ma batterie{% endblock %}
+{% block title %}Ma batterie{% endblock %}
 
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
-<form method="POST" action="{{ path('app_scene_batterie', {id: batterie.id}) }}">
-    <table class="tableau-musicien table-bordered mt-3">
-        <thead>
-            <tr>
-                <th scope="col">Nombres de toms</th>
-                <th scope="col">Nombres de Cymbales</th>
-                <th scope="col">Nombres de grosse caisse</th>
-                <th scope="col">Nombres de caisse claire</th>
-                <th scope="col">Nombres de charleston</th>
-            </tr>
-        </thead>
-        <tbody>
+
+    <div class="container py-4">
+
+        <h2 class="mb-4 fw-bold"> Configuration de la batterie</h2>
+
         {% if batterie.id %}
-           
-            <tr>
-                <td><input type="number" name="NbToms" value="{{ configbatterie ? configbatterie.nbToms : '' }}"></td>
-                <td><input type="number" name="NbCymbales" value="{{ configbatterie ? configbatterie.nbCymbales : '' }}"></td>
-                <td><input type="number" name="NbCaisseClaire" value="{{ configbatterie ? configbatterie.nbCaisseClaire: '' }}"></td>
-                <td><input type="number" name="NbGrosseCaisse" value="{{ configbatterie ? configbatterie.nbGrosseCaisse: '' }}"></td>
-                <td><input type="number" name="NbCharleston" value="{{ configbatterie ? configbatterie.nbCharleston : '' }}"></td>
-            </tr>
+        <form method="POST" action="{{ path('app_scene_batterie', {id: batterie.id}) }}">
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    Nombre d'éléments
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Toms</label>
+                            <input type="number" name="NbToms" min="0"
+                                value="{{ configbatterie ? configbatterie.nbToms : '' }}"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Cymbales</label>
+                            <input type="number" name="NbCymbales" min="0"
+                                value="{{ configbatterie ? configbatterie.nbCymbales : '' }}"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Grosse caisse</label>
+                            <input type="number" name="NbGrosseCaisse" min="0"
+                                value="{{ configbatterie ? configbatterie.nbGrosseCaisse : '' }}"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Caisse claire</label>
+                            <input type="number" name="NbCaisseClaire" min="0"
+                                value="{{ configbatterie ? configbatterie.nbCaisseClaire : '' }}"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Charleston</label>
+                            <input type="number" name="NbCharleston" min="0"
+                                value="{{ configbatterie ? configbatterie.nbCharleston : '' }}"
+                                class="form-control">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                 Sauvegarder la configuration
+            </button>
+
+        </form>
         {% endif %}
-        </tbody>
-    </table>
-    <button type="submit" class="btn btn-success mt-2">
-        Sauvegarder les équipements
-    </button>
-</form>
+
+    </div>
+
 {% endblock %}

@@ -1,61 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}mes equipements{% endblock %}
+{% block title %}Mes équipements{% endblock %}
 
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
-<form method="POST" action="{{ path('app_scene_mesequipements', {id: scene.id}) }}">
-    <table class="tableau-musicien table-bordered mt-3">
-        <thead>
-            <tr>
-                <th scope="col">Nom du musicien</th>
-                <th scope="col">Nom de l'instrument</th>
-                <th scope="col">Équipement</th>
-                <th scope="col">Micro Voix</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if scene.id %}
-            {% for element in scene.elementScenes %}
-                <tr>
-                    <td>{{ element.nomMusicien }}</td>
-                    <td>{{ element.instrument.libelle }}</td>
-                    <td>
-                        <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
-                            <option value="">-- Aucun --</option>
-                            {% for equipement in equipements %}
-                                <option value="{{ equipement.id }}"
-                                    {% if element.equipement and element.equipement.id == equipement.id %}
-                                        selected
-                                    {% endif %}>
-                                    {{ equipement.libelle }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="micro[{{ element.id }}]" class="form-select form-select-sm">
-                            <option value="">-- Aucun --</option>
-                            {% for micro in micros %}
-                                <option value="{{ micro.id }}"
-                                    {% if element.micro and element.micro.id == micro.id %}
-                                        selected
-                                    {% endif %}>
-                                    {{ micro.libelle }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </td>
 
-                </tr>
+    <div class="container py-4">
 
-            {% endfor %}
-        {% endif %}
-        </tbody>
-    </table>
-    <button type="submit" name="action" value="equipement" class="btn btn-success mt-2">
-        Sauvegarder les équipements
-    </button>
+        <h2 class="mb-4 fw-bold">Affectation des équipements et micros</h2>
 
-</form>
-    {% endblock %}
+        <form method="POST" action="{{ path('app_scene_mesequipements', {id: scene.id}) }}">
+             {% if scene.id %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white fw-bold">
+                        Musiciens / équipements
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered table-hover mb-0">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>Nom du musicien</th>
+                                    <th>Instrument</th>
+                                    <th>Équipement</th>
+                                    <th>Micro voix</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for element in scene.elementScenes %}
+                                <tr>
+                                    <td>{{ element.nomMusicien }}</td>
+                                    <td>{{ element.instrument.libelle }}</td>
+                                    <td>
+                                        <select name="equipement[{{ element.id }}]" class="form-select form-select-sm">
+                                            <option value="">-- Aucun --</option>
+                                            {% for equipement in equipements %}
+                                                <option value="{{ equipement.id }}"
+                                                    {% if element.equipement and element.equipement.id == equipement.id %}
+                                                        selected
+                                                    {% endif %}>
+                                                    {{ equipement.libelle }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="micro[{{ element.id }}]" class="form-select form-select-sm">
+                                            <option value="">-- Aucun --</option>
+                                            {% for micro in micros %}
+                                                <option value="{{ micro.id }}"
+                                                    {% if element.micro and element.micro.id == micro.id %}
+                                                        selected
+                                                    {% endif %}>
+                                                    {{ micro.libelle }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+            <button type="submit" name="action" value="equipement" class="btn btn-success mt-2">
+                 Sauvegarder les équipements
+            </button>
+        </form>
+
+    </div>
+
+{% endblock %}

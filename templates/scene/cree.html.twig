@@ -1,33 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}creation scene{% endblock %}
+{% block title %}Créer une scène{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <h1 class="mb-4">Creation Scene</h1>
 
-{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
-    {{ form_row(form.nomEvenement) }}
-    {{ form_row(form.dateEvenement) }}
-    {{ form_row(form.nomArtiste) }}
+    <div class="container py-4">
 
-    <div id="instruments">
-        <h2>Ajouter un nouvel instrument :</h2>
-        <div class="instrument-row">
-            <input type="text" name="instruments[0]" id="recherche-instrument"  placeholder="Rechercher un instrument..."  autocomplete="off">
-            <input type="hidden" name="instrumentsId[0]" id="instrument-id-0">
-            <ul id="suggestions-instrument" class="list-group position-absolute w-100 z-3" style="display:none;"></ul>
-            <input type="text" name="nomMusicien[0]" placeholder="Nom musicien">
-        </div>
+        <h2 class="mb-4 fw-bold">Créer une scène</h2>
+
+        {{ form_start(form, {'attr': {'data-turbo': 'false', 'novalidate': 'novalidate'}}) }}
+        {% for error in form.vars.errors %}
+            <div class="alert alert-danger">{{ error.message }}</div>
+        {% endfor %}
+
+        {% for child in form %}
+            {% for error in child.vars.errors %}
+                <div class="alert alert-danger">{{ child.vars.name }} : {{ error.message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Informations de l'événement
+                </div>
+                <div class="card-body">
+                    {{ form_row(form.nomEvenement) }}
+                    {{ form_row(form.dateEvenement) }}
+                    {{ form_row(form.nomArtiste) }}
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    Ajouter un instrument
+                </div>
+                <div class="card-body">
+                    <div id="instruments">
+                        <div class="instrument-row row g-2 align-items-center mb-2 position-relative">
+                            <div class="col-md-5">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="instruments[0]"
+                                    id="recherche-instrument"
+                                    placeholder="Rechercher un instrument..."
+                                    autocomplete="off"
+                                >
+                                <input type="hidden" name="instrumentsId[0]" id="instrument-id-0">
+                                <ul id="suggestions-instrument" class="list-group position-absolute w-100 z-3" style="display:none;"></ul>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="nomMusicien[0]" placeholder="Nom du musicien">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add_instrument" class="btn btn-outline-secondary mt-2">
+                        + Ajouter un instrument
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4">
+                <a href="{{ path('app_scene') }}" class="btn btn-outline-secondary">Annuler</a>
+                <button type="submit" name="action" value="ajouter" class="btn btn-primary">
+                    Valider la scène
+                </button>
+            </div>
+
+        {{ form_end(form) }}
+
     </div>
 
-    <button type="button" id="add_instrument" class="btn btn-secondary mt-2 d-block">
-        + Ajouter instrument
-    </button>
-    <button type="submit" name="action" value="ajouter" class="btn btn-primary mt-2">
-        Valider la scene
-    </button>
-{{ form_end(form) }}
-
-</div>
 {% endblock %}
