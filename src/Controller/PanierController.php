@@ -56,6 +56,7 @@ class PanierController extends AbstractController
         
         $panier = $panierRepo->findOneBy(['user' => $this->getUser()]);
 
+
         if ($panier && $em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
         $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
         return $this->redirectToRoute('app_panier');
@@ -103,6 +104,7 @@ class PanierController extends AbstractController
         if ($panierMateriel) {
             $panier = $panierMateriel->getPanier();
 
+            
             if ($em->getRepository(Devis::class)->findOneBy(['panier' => $panier])) {
                 $this->addFlash('warning', 'Vous avez déjà envoyé un devis, le panier ne peut plus être modifié.');
                 return $this->redirectToRoute('app_panier'); 

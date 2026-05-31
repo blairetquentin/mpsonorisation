@@ -229,8 +229,10 @@ class SceneController extends AbstractController
         $batterie = $elementSceneRepository->find($id);
         if ($batterie->getScene()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
-        }
+        
+            }
         $configbatterie = $configBatterieRepository->findOneBy(['elementScene' => $batterie]);
+        
         if($request->isMethod('POST')){
             if (!$configbatterie) {
                 $configbatterie = new ConfigBatterie();
@@ -291,6 +293,8 @@ class SceneController extends AbstractController
         if($request->isMethod('POST')) {
             $materielsChoisis = $request->request->all('equipement');
             $batterieChoisis = $request->request->all('batterie');
+
+
 
             foreach($materielsChoisis as $elementSceneId => $materielSuggereId) {
                 $elementScene = $elementSceneRepository->find($elementSceneId);

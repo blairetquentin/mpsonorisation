@@ -34,4 +34,10 @@ body {
   gap: 2rem;
   padding: 1.5rem;
 }
+.card-img-top {
+    object-fit: contain;
+    height: 200px;
+    width: 100%;
+    background-color: #f8f9fa;
+}
 
