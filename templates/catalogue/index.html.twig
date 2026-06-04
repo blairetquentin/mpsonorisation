@@ -3,7 +3,7 @@
 {% block title %}Catalogue — MpSonorisation{% endblock %}
 
 {% block body %}
-<div class="container py-5">
+<div class="container-fluid py-5">
     <h1 class="mb-4">Notre catalogue</h1>
     <div class="position-relative mb-4">
         <input type="text" id="recherche-catalogue" class="form-control" placeholder="Rechercher un matériel..."autocomplete="off">
@@ -25,8 +25,7 @@
                                      class="card-img-top"
                                      alt="{{ materiel.libelle }}">
                             {% else %}
-                                <div class="bg-secondary d-flex align-items-center justify-content-center"
-                                     style="height: 200px;">
+                                <div class="bg-secondary d-flex card-img-vide align-items-center justify-content-center">
                                     <span class="text-white">Pas d'image</span>
                                 </div>
                             {% endif %}
