@@ -294,8 +294,6 @@ class SceneController extends AbstractController
             $materielsChoisis = $request->request->all('equipement');
             $batterieChoisis = $request->request->all('batterie');
 
-
-
             foreach($materielsChoisis as $elementSceneId => $materielSuggereId) {
                 $elementScene = $elementSceneRepository->find($elementSceneId);
                 if (!$elementScene) {
