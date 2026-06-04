@@ -3,7 +3,7 @@
 {% block title %}Mon panier — MpSonorisation{% endblock %}
 
 {% block body %}
-<div class="container py-5">
+<div class="container-fluid py-5">
     <h1 class="mb-4">Mon panier</h1>
     {% for message in app.flashes('success') %}
     <div class="alert alert-success">{{ message }}</div>
@@ -55,12 +55,14 @@
             {{ form_row(form.adresse_location) }}
             <button type="submit" class="btn btn-primary mt-2">Enregistrer</button>
         {{ form_end(form, {'render_rest': false}) }}
-        <a href="{{ path('app_envoyer_devis') }}" class="btn btn-success me-2">
-            Envoyer le devis par email
-        </a>
-        <a href="{{ path('app_catalogue') }}" class="btn btn-outline-primary me-2">
-            Continuer les achats
-        </a>
+        <div class="d-flex gap-2 mt-4">
+            <a href="{{ path('app_envoyer_devis') }}" class="btn btn-success">
+                Envoyer le devis par email
+            </a>
+            <a href="{{ path('app_catalogue') }}" class="btn btn-outline-primary">
+                Continuer les achats
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

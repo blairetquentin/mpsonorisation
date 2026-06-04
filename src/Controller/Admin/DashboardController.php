@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -13,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
-{
-    return $this->render('@EasyAdmin/page/content.html.twig');
-}
+    {
+        return $this->render('@EasyAdmin/page/content.html.twig');
+    }
 
     public function configureDashboard(): Dashboard
     {
@@ -33,5 +32,4 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(DevisCrudController::class, 'Devis', 'fa fa-file');
         yield MenuItem::linkTo(MaterielSuggereCrudController::class, 'Materiel Suggere', 'fas fa-box');
     }
-    }
-
+}

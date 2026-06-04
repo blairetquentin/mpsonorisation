@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Devis;
 use App\Repository\CategorieRepository;
 use App\Repository\DevisRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,9 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
 class DevisDetailController extends AbstractController
 {
     #[Route('/admin/devis/{id}/detail', name: 'admin_devis_detail_custom')]
@@ -94,17 +93,11 @@ class DevisDetailController extends AbstractController
     }
 
     #[Route('/admin/devis/{id}/traiter', name: 'admin_devis_traiter', methods: ['POST'])]
-    public function traiter(int $id, DevisRepository $devisRepo, EntityManagerInterface $em, Request $request, MailerInterface $mailer): Response
+    public function traiter(Devis $devis, DevisRepository $devisRepo, EntityManagerInterface $em, Request $request, MailerInterface $mailer): Response
     {
-        $devis = $devisRepo->find($id);
-
-        if (!$devis) {
-            throw $this->createNotFoundException('Devis introuvable');
-        }
-
-        if (!$this->isCsrfTokenValid('traiter_devis_' . $id, $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('traiter_devis_' . $devis->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Token invalide.');
-            return $this->redirectToRoute('admin_devis_detail_custom', ['id' => $id]);
+            return $this->redirectToRoute('admin_devis_detail_custom', ['id' => $devis->getId()]);
         }
 
         $statut = $request->request->get('statut');

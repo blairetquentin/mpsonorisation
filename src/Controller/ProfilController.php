@@ -8,10 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
-
-
+#[IsGranted('ROLE_USER')]
 final class ProfilController extends AbstractController
 {
     #[Route('/profil', name: 'app_profil')]
@@ -22,14 +21,14 @@ final class ProfilController extends AbstractController
         $form = $this->createForm(ProfilFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash("succés","Profil mis a jour !!");
+            $this->addFlash("succés", "Profil mis a jour !!");
             return $this->redirectToRoute('app_profil');
         }
         return $this->render('profil/index.html.twig', [
             'user' => $user,
-            'form'=> $form,
+            'form' => $form,
         ]);
     }
 }

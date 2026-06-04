@@ -5,7 +5,7 @@
 {% block body %}
     {% include 'scene/navbarsecondaire.html.twig' %}
 
-    <div class="container py-4">
+    <div class="container-fluid py-4">
 
         <h2 class="mb-4 fw-bold"> Affectation du matériel suggéré</h2>
 
@@ -37,8 +37,10 @@
                                                     <option value="">-- Aucun --</option>
                                                     {% for materielSuggere in element.equipement.materielSuggeres %}
                                                         <option value="{{ materielSuggere.id }}"
-                                                            {% if element.materielSuggere and element.materielSuggere.id == materielSuggere.id %}
-                                                                selected
+                                                            {% if element.materielSuggere %}
+                                                                {% if element.materielSuggere.id == materielSuggere.id %}selected{% endif %}
+                                                            {% else %}
+                                                                {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                             {% endif %}>
                                                             {{ materielSuggere.materiel.libelle }}
                                                         </option>
@@ -81,8 +83,10 @@
                                                             {% if equipement.libelle == 'Tom' %}
                                                                 {% for materielSuggere in equipement.materielSuggeres %}
                                                                     <option value="{{ materielSuggere.id }}"
-                                                                        {% if element.configBatterie.microTom and element.configBatterie.microTom.id == materielSuggere.id %}
-                                                                            selected
+                                                                        {% if element.configBatterie.microTom %}
+                                                                            {% if element.configBatterie.microTom.id == materielSuggere.id %}selected{% endif %}
+                                                                        {% else %}
+                                                                            {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                                         {% endif %}>
                                                                         {{ materielSuggere.materiel.libelle }}
                                                                     </option>
@@ -104,8 +108,10 @@
                                                             {% if equipement.libelle == 'Cymbale' %}
                                                                 {% for materielSuggere in equipement.materielSuggeres %}
                                                                     <option value="{{ materielSuggere.id }}"
-                                                                        {% if element.configBatterie.microCymbale and element.configBatterie.microCymbale.id == materielSuggere.id %}
-                                                                            selected
+                                                                        {% if element.configBatterie.microCymbale %}
+                                                                            {% if element.configBatterie.microCymbale.id == materielSuggere.id %}selected{% endif %}
+                                                                        {% else %}
+                                                                            {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                                         {% endif %}>
                                                                         {{ materielSuggere.materiel.libelle }}
                                                                     </option>
@@ -127,8 +133,10 @@
                                                             {% if equipement.libelle == 'Grosse caisse' %}
                                                                 {% for materielSuggere in equipement.materielSuggeres %}
                                                                     <option value="{{ materielSuggere.id }}"
-                                                                        {% if element.configBatterie.microGrosseCaisse and element.configBatterie.microGrosseCaisse.id == materielSuggere.id %}
-                                                                            selected
+                                                                        {% if element.configBatterie.microGrosseCaisse %}
+                                                                            {% if element.configBatterie.microGrosseCaisse.id == materielSuggere.id %}selected{% endif %}
+                                                                        {% else %}
+                                                                            {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                                         {% endif %}>
                                                                         {{ materielSuggere.materiel.libelle }}
                                                                     </option>
@@ -150,8 +158,10 @@
                                                             {% if equipement.libelle == 'Caisse claire' %}
                                                                 {% for materielSuggere in equipement.materielSuggeres %}
                                                                     <option value="{{ materielSuggere.id }}"
-                                                                        {% if element.configBatterie.microCaisseClaire and element.configBatterie.microCaisseClaire.id == materielSuggere.id %}
-                                                                            selected
+                                                                        {% if element.configBatterie.microCaisseClaire %}
+                                                                            {% if element.configBatterie.microCaisseClaire.id == materielSuggere.id %}selected{% endif %}
+                                                                        {% else %}
+                                                                            {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                                         {% endif %}>
                                                                         {{ materielSuggere.materiel.libelle }}
                                                                     </option>
@@ -173,8 +183,10 @@
                                                             {% if equipement.libelle == 'Charleston' %}
                                                                 {% for materielSuggere in equipement.materielSuggeres %}
                                                                     <option value="{{ materielSuggere.id }}"
-                                                                        {% if element.configBatterie.microCharleston and element.configBatterie.microCharleston.id == materielSuggere.id %}
-                                                                            selected
+                                                                        {% if element.configBatterie.microCharleston %}
+                                                                            {% if element.configBatterie.microCharleston.id == materielSuggere.id %}selected{% endif %}
+                                                                        {% else %}
+                                                                            {% if 'Shure' in materielSuggere.materiel.libelle %}selected{% endif %}
                                                                         {% endif %}>
                                                                         {{ materielSuggere.materiel.libelle }}
                                                                     </option>
